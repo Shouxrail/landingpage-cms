@@ -53,6 +53,10 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.error("Upload error:", error);
-    return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
+    try { require("fs").appendFileSync(".next/error-trace.log", "\n" + (error instanceof Error ? error.stack : String(error))); } catch(e) {}
+    return NextResponse.json({ 
+      error: "Failed to upload file", 
+      details: error instanceof Error ? error.message : String(error) 
+    }, { status: 500 });
   }
 }

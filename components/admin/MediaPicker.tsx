@@ -31,9 +31,15 @@ export default function MediaPicker({ onSelect, onClose, title = "Select Media" 
         try {
             const res = await fetch("/api/admin/media");
             const data = await res.json();
-            setMediaItems(data);
+            if (Array.isArray(data)) {
+                setMediaItems(data);
+            } else {
+                console.error("API returned non-array:", data);
+                setMediaItems([]);
+            }
         } catch (err) {
             console.error("Failed to fetch media", err);
+            setMediaItems([]);
         } finally {
             setLoading(false);
         }
@@ -52,11 +58,18 @@ export default function MediaPicker({ onSelect, onClose, title = "Select Media" 
                 method: "POST",
                 body: formData,
             });
+            const data = await res.json().catch(() => null);
             if (res.ok) {
                 fetchMedia();
+                if (data?.storagePath) {
+                    onSelect(data.storagePath);
+                }
+            } else {
+                alert(`Upload failed: ${data?.error || res.statusText || "Unknown error"}\n${data?.details || ""}`);
             }
         } catch (err) {
             console.error("Upload failed", err);
+            alert(`Upload system failed: ${String(err)}`);
         } finally {
             setIsUploading(false);
         }
@@ -75,7 +88,7 @@ export default function MediaPicker({ onSelect, onClose, title = "Select Media" 
                     </div>
                     <div className="flex items-center gap-4">
                         <label className={`btn btn-primary btn-sm h-11 px-6 font-bold shadow-lg shadow-primary/20 ${isUploading ? 'loading' : ''}`}>
-                            <input type="file" className="hidden" onChange={handleUpload} disabled={isUploading} accept="image/*" />
+                            <input type="file" className="hidden" onChange={handleUpload} disabled={isUploading} accept="image/*,video/*" />
                             {isUploading ? "Uploading..." : "Upload New"}
                         </label>
                         <button onClick={onClose} className="btn btn-ghost btn-circle btn-sm text-white/40 hover:bg-white/20 transition-all duration-300">
@@ -104,11 +117,20 @@ export default function MediaPicker({ onSelect, onClose, title = "Select Media" 
                                     className="group relative aspect-square bg-white/5 border border-white/5 overflow-hidden cursor-pointer hover:border-primary/50 transition-all duration-300 active:scale-95 shadow-lg"
                                     onClick={() => onSelect(item.storagePath)}
                                 >
-                                    <img
-                                        src={item.storagePath}
-                                        alt={item.fileName}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    />
+                                    {item.mimeType?.startsWith('video/') || item.fileName.match(/\.(mp4|webm|ogg|mov)$/i) ? (
+                                        <video
+                                            src={item.storagePath}
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 pointer-events-none"
+                                            muted
+                                            playsInline
+                                        />
+                                    ) : (
+                                        <img
+                                            src={item.storagePath}
+                                            alt={item.fileName}
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        />
+                                    )}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
                                         <p className="text-[10px] font-bold text-white truncate max-w-full">{item.fileName}</p>
                                         <p className="text-[8px] font-black text-white/40 uppercase tracking-widest mt-1">{(item.size / 1024).toFixed(1)} KB</p>

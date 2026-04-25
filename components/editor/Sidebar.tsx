@@ -40,6 +40,39 @@ export default function Sidebar({
   isSaving
 }: SidebarProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index) {
+      setDraggedIndex(null);
+      return;
+    }
+
+    const newBlocks = [...blocks];
+    const [movedBlock] = newBlocks.splice(draggedIndex, 1);
+    newBlocks.splice(index, 0, movedBlock);
+
+    onUpdateBlocks(newBlocks);
+
+    if (selectedIndex === draggedIndex) {
+      setSelectedIndex(index);
+    } else if (selectedIndex !== null) {
+      if (draggedIndex < selectedIndex && index >= selectedIndex) setSelectedIndex(selectedIndex - 1);
+      else if (draggedIndex > selectedIndex && index <= selectedIndex) setSelectedIndex(selectedIndex + 1);
+    }
+    setDraggedIndex(null);
+  };
 
   const updateBlockData = (index: number, newData: any) => {
     const newBlocks = [...blocks];
@@ -60,7 +93,11 @@ export default function Sidebar({
 
   const removeBlock = (index: number) => {
     onUpdateBlocks(blocks.filter((_, i) => i !== index));
-    if (selectedIndex === index) setSelectedIndex(null);
+    if (selectedIndex === index) {
+      setSelectedIndex(null);
+    } else if (selectedIndex !== null && selectedIndex > index) {
+      setSelectedIndex(selectedIndex - 1);
+    }
   };
 
   return (
@@ -178,10 +215,15 @@ export default function Sidebar({
             {blocks.map((block, idx) => (
               <div
                 key={idx}
-                className={`group flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 cursor-pointer ${selectedIndex === idx
+                draggable
+                onDragStart={(e) => handleDragStart(e, idx)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, idx)}
+                onDragEnd={() => setDraggedIndex(null)}
+                className={`group flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 cursor-move ${selectedIndex === idx
                   ? "bg-primary/10 border-primary shadow-[0_0_20px_rgba(var(--p),0.1)]"
                   : "bg-white/5 border-white/5 hover:border-white/20"
-                  }`}
+                  } ${draggedIndex === idx ? "opacity-50 scale-95" : ""}`}
                 onClick={() => setSelectedIndex(idx)}
               >
                 <div className="flex items-center gap-3">
@@ -200,16 +242,16 @@ export default function Sidebar({
         </section>
 
         {/* Property Editor */}
-        {selectedIndex !== null && (
+        {selectedIndex !== null && blocks[selectedIndex] && (
           <section className="bg-white/5 p-6 rounded-3xl border border-white/10 animate-in slide-in-from-bottom-4 duration-500 shadow-inner">
             <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mb-6 flex items-center justify-between">
               Attributes: {blocks[selectedIndex].type}
               <button onClick={() => setSelectedIndex(null)} className="btn btn-ghost btn-xs text-white/20 hover:text-white">Close</button>
             </h3>
             <PropertyEditor
-              schema={BLOCK_REGISTRY[blocks[selectedIndex!].type]?.Schema}
-              data={blocks[selectedIndex!].data}
-              onChange={(newData) => updateBlockData(selectedIndex!, newData)}
+              schema={BLOCK_REGISTRY[blocks[selectedIndex].type]?.Schema}
+              data={blocks[selectedIndex].data}
+              onChange={(newData) => updateBlockData(selectedIndex, newData)}
             />
           </section>
         )}
