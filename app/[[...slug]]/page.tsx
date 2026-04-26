@@ -54,6 +54,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
   };
 }
 
+import ViewportScaler from "@/components/ViewportScaler";
+
 export default async function Page({ params }: { params: Promise<{ slug?: string[] }> }) {
   const { slug } = await params;
   const slugString = slug ? slug.join("/") : "home";
@@ -68,10 +70,13 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
 
   if (!page) notFound();
 
+  const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content;
+
   return (
-    <main>
-      {/* page.content is the JSON column we defined in the schema */}
-      <BlockRenderer blocks={page.content?.blocks || []} />
+    <main style={{ backgroundColor: content?.settings?.backgroundColor || "transparent", overflowX: 'hidden' }}>
+      {/* <ViewportScaler> */}
+      <BlockRenderer blocks={content?.blocks || []} />
+      {/* </ViewportScaler> */}
     </main>
   );
 }

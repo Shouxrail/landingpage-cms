@@ -1,28 +1,36 @@
 export const HeroSchema = {
   bgColor: { type: "color", label: "Background Color", default: "" },
   bgImage: { type: "image", label: "Background Image", default: "" },
-  title: { type: "text", label: "Hero Title", default: "Enter Title" },
-  subtitle: { type: "textarea", label: "Subtitle", default: "Enter Subtitle here..." },
-  description: { type: "textarea", label: "Description", default: "Enter Description here..." },
+  overlayOpacity: {
+    type: "select",
+    label: "Overlay Filter",
+    options: [
+      { label: "None", value: "bg-transparent" },
+      { label: "Glass (White)", value: "bg-white/40" },
+      { label: "Glass (Black)", value: "bg-black/40" },
+      { label: "Soft White", value: "bg-white/80" },
+      { label: "Soft Black", value: "bg-black/80" }
+    ],
+    default: "bg-transparent"
+  },
+  paddingY: { type: "range", label: "Vertical Padding (px)", min: 0, max: 300, step: 10, default: 100 },
   align: {
     type: "select",
-    label: "Text Alignment",
+    label: "Content Alignment",
     options: [
-      { label: "Left Aligned", value: "text-left justify-start" },
-      { label: "Center Aligned", value: "text-center justify-center" },
-      { label: "Right Aligned", value: "text-right justify-end" },
+      { label: "Left", value: "items-start text-left" },
+      { label: "Center", value: "items-center text-center" },
+      { label: "Right", value: "items-end text-right" },
     ],
-    default: "text-center justify-center"
+    default: "items-center text-center"
   },
-  buttons: {
-    type: "objectList",
-    label: "Action Buttons",
-    itemSchema: {
-      label: { type: "text", label: "Button Label", default: "Get Started" },
-      url: { type: "text", label: "Button URL", default: "#" },
-    },
+  children: {
+    type: "blocks",
+    label: "Block Content",
     default: [
-      { label: "Get Started", url: "#" }
+      { type: "heading", data: { text: "Main Hero Heading", level: "h1", fontSize: "text-6xl", align: "text-inherit" } },
+      { type: "text", data: { content: "This is a modular hero section. Add any blocks here.", fontSize: "text-xl", align: "text-inherit" } },
+      { type: "button", data: { text: "Get Started Now", align: "justify-center" } }
     ]
   }
 };

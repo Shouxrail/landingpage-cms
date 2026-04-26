@@ -5,6 +5,11 @@ import { EditorBlock } from "@/blocks/EditorBlock";
 import { LayoutBlock } from "@/blocks/LayoutBlock";
 import { VideoBlock } from "@/blocks/VideoBlock";
 import { BackgroundVideoBlock } from "@/blocks/BackgroundVideoBlock";
+import { HeadingBlock } from "@/blocks/HeadingBlock";
+import { TextBlock } from "@/blocks/TextBlock";
+import { ButtonBlock } from "@/blocks/ButtonBlock";
+import { SpacerBlock } from "@/blocks/SpacerBlock";
+import { CardBlock } from "@/blocks/Card";
 
 export const BLOCK_REGISTRY: Record<string, any> = {
   [HeroBlock.type]: HeroBlock,
@@ -14,4 +19,9 @@ export const BLOCK_REGISTRY: Record<string, any> = {
   [LayoutBlock.type]: LayoutBlock,
   [VideoBlock.type]: VideoBlock,
   [BackgroundVideoBlock.type]: BackgroundVideoBlock,
+  [HeadingBlock.type]: HeadingBlock,
+  [TextBlock.type]: TextBlock,
+  [ButtonBlock.type]: ButtonBlock,
+  [SpacerBlock.type]: SpacerBlock,
+  [CardBlock.type]: CardBlock
 };

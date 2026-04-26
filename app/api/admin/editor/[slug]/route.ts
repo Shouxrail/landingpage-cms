@@ -8,7 +8,15 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
   const page = await db.query.landingPages.findFirst({
     where: eq(landingPages.slug, slug),
   });
-  return NextResponse.json(page || { content: { blocks: [] } });
+  const p = page as any;
+  if (p && typeof p.content === "string") {
+    try {
+      p.content = JSON.parse(p.content);
+    } catch (e) {
+      console.error("Failed to parse content JSON:", e);
+    }
+  }
+  return NextResponse.json(p || { content: { blocks: [] } });
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ slug: string }> }) {

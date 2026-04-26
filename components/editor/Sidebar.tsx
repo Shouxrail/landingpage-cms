@@ -1,15 +1,20 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { BLOCK_REGISTRY } from "@/lib/registry";
-import PropertyEditor from "./PropertyEditor";
 
 interface SidebarProps {
   blocks: any[];
   onUpdateBlocks: (blocks: any[]) => void;
+  settings: { backgroundColor?: string };
+  onUpdateSettings: (settings: any) => void;
+  selectedIndex: number | null;
+  onSelectIndex: (index: number | null) => void;
   title: string;
-  status: string;
+  isSaving: boolean;
+  saveToMysql: (isPublish: boolean) => void;
   onUpdateTitle: (title: string) => void;
+  status: string;
   slug: string;
   onUpdateSlug: (slug: string) => void;
   seoTitle: string;
@@ -17,18 +22,22 @@ interface SidebarProps {
   seoDescription: string;
   onUpdateSeoDescription: (val: string) => void;
   ogImage: string;
-  onUpdateOgImage: (val: string) => void;
-  onSave: (publish: boolean) => void;
-  isSaving: boolean;
+  onUpdateOgImage: () => void; // Trigger for media picker
 }
 
 export default function Sidebar({
   blocks,
   onUpdateBlocks,
+  settings,
+  onUpdateSettings,
+  selectedIndex,
+  onSelectIndex,
   title,
-  status,
   onUpdateTitle,
+  isSaving,
+  saveToMysql,
   slug,
+  status,
   onUpdateSlug,
   seoTitle,
   onUpdateSeoTitle,
@@ -36,48 +45,27 @@ export default function Sidebar({
   onUpdateSeoDescription,
   ogImage,
   onUpdateOgImage,
-  onSave,
-  isSaving
 }: SidebarProps) {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<'architecture' | 'page' | 'seo'>('architecture');
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
-    e.dataTransfer.effectAllowed = "move";
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
   };
 
   const handleDrop = (e: React.DragEvent, index: number) => {
     e.preventDefault();
-    if (draggedIndex === null || draggedIndex === index) {
-      setDraggedIndex(null);
-      return;
-    }
+    if (draggedIndex === null || draggedIndex === index) return;
 
     const newBlocks = [...blocks];
     const [movedBlock] = newBlocks.splice(draggedIndex, 1);
     newBlocks.splice(index, 0, movedBlock);
-
     onUpdateBlocks(newBlocks);
-
-    if (selectedIndex === draggedIndex) {
-      setSelectedIndex(index);
-    } else if (selectedIndex !== null) {
-      if (draggedIndex < selectedIndex && index >= selectedIndex) setSelectedIndex(selectedIndex - 1);
-      else if (draggedIndex > selectedIndex && index <= selectedIndex) setSelectedIndex(selectedIndex + 1);
-    }
     setDraggedIndex(null);
-  };
-
-  const updateBlockData = (index: number, newData: any) => {
-    const newBlocks = [...blocks];
-    newBlocks[index] = { ...newBlocks[index], data: newData };
-    onUpdateBlocks(newBlocks);
   };
 
   const addBlock = (type: string) => {
@@ -88,192 +76,173 @@ export default function Sidebar({
     }, {});
 
     onUpdateBlocks([...blocks, { type, data: defaultData }]);
-    setSelectedIndex(blocks.length);
+    onSelectIndex(blocks.length);
+    setActiveTab('architecture');
   };
 
   const removeBlock = (index: number) => {
     onUpdateBlocks(blocks.filter((_, i) => i !== index));
-    if (selectedIndex === index) {
-      setSelectedIndex(null);
-    } else if (selectedIndex !== null && selectedIndex > index) {
-      setSelectedIndex(selectedIndex - 1);
-    }
+    if (selectedIndex === index) onSelectIndex(null);
   };
 
   return (
-    <aside className="w-[380px] bg-white/5 backdrop-blur-3xl border-r border-white/10 flex flex-col h-screen overflow-hidden selection:bg-primary/30">
-      <div className="p-4 border-b border-white/10 bg-white/5 backdrop-blur-2xl sticky top-0 z-20">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <Link href="/admin/menu" className="btn btn-ghost btn-circle btn-sm text-white/40 -ml-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
-            </Link>
-            <h2 className="font-black text-2xl text-white tracking-tighter">Editor</h2>
-            <div className="badge badge-primary badge-xs animate-pulse capitalize">{status}</div>
-          </div>
+    <aside className="w-[30%] border-r border-white/5 bg-black/40 backdrop-blur-3xl flex flex-col h-full overflow-hidden">
+      {/* TOP STATUS BAR */}
+      <header className="h-14 border-b border-white/5 flex items-center justify-between px-6 bg-black/20">
+        <div className="flex items-center gap-4">
+          <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{slug}</div>
         </div>
-        <div className="flex justify-end gap-2 mt-2">
+        <div className="flex items-center gap-2">
           <button
-            onClick={() => onSave(status === "published")}
+            onClick={() => saveToMysql(status === 'published' ? true : false)}
             disabled={isSaving}
-            className="btn btn-ghost btn-sm h-10 px-6 font-bold text-white"
+            className="btn btn-ghost btn-sm h-9 px-6 rounded-lg text-white font-bold"
           >
-            {isSaving ? <span className="loading loading-spinner loading-xs"></span> : "Save"}
+            {isSaving ? "..." : "Save"}
           </button>
-
           <button
-            onClick={() => onSave(status !== "published")}
+            onClick={() => saveToMysql(status === 'published' ? false : true)}
             disabled={isSaving}
-            className={`btn btn-sm text-white shadow-lg shadow-primary/20 h-10 px-6 font-bold ${status === "draft" ? "btn-primary" : "btn-error"}`}
+            className={`btn btn-sm h-9 px-6 rounded-lg font-bold ${status === 'published' ? 'btn-error' : 'btn-primary'}`}
           >
-            {isSaving ? <span className="loading loading-spinner loading-xs"></span> : status === "draft" ? "Publish" : "Unpublish"}
+            {status === 'published' ? 'Unpublish' : 'Publish'}
           </button>
         </div>
+      </header>
+      <div className="flex border-b border-white/5">
+        {[
+          { id: 'architecture', label: 'Blocks' },
+          { id: 'page', label: 'Meta' },
+          { id: 'seo', label: 'SEO' }
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest transition-colors ${activeTab === tab.id ? 'text-primary border-b-2 border-primary' : 'text-white/20 hover:text-white/40'}`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
-        {/* Page Meta Settings */}
-        <section className="space-y-5">
-          <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Identity</h3>
-          <div className="form-control w-full">
-            <label className="label py-1"><span className="label-text text-white/50 font-bold text-[10px] uppercase tracking-widest">Page Title</span></label>
-            <input
-              type="text"
-              className="input input-sm bg-white/5 border-white/10 text-white font-bold h-10"
-              value={title}
-              onChange={(e) => onUpdateTitle(e.target.value)}
-            />
-          </div>
-          <div className="form-control w-full">
-            <label className="label py-1"><span className="label-text text-white/50 font-bold text-[10px] uppercase tracking-widest">URL Slug</span></label>
-            <div className="join w-full">
-              <span className="join-item bg-white/5 border border-white/10 px-3 flex items-center text-white/20 text-xs font-bold">/</span>
-              <input
-                type="text"
-                className="input input-sm bg-white/5 border-white/10 text-white font-bold h-10 flex-1 join-item"
-                value={slug}
-                onChange={(e) => onUpdateSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* SEO Settings */}
-        <section className="space-y-5">
-          <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">SEO Optimization</h3>
-          <div className="form-control w-full">
-            <label className="label py-1"><span className="label-text text-white/50 font-bold text-[10px] uppercase tracking-widest">SEO Title Tag</span></label>
-            <input
-              type="text"
-              placeholder="Search engine title..."
-              className="input input-sm bg-white/5 border-white/10 text-white font-bold h-10"
-              value={seoTitle}
-              onChange={(e) => onUpdateSeoTitle(e.target.value)}
-            />
-          </div>
-          <div className="form-control w-full">
-            <label className="label py-1"><span className="label-text text-white/50 font-bold text-[10px] uppercase tracking-widest">Meta Description</span></label>
-            <textarea
-              placeholder="Search engine summary..."
-              className="textarea textarea-sm bg-white/5 border-white/10 text-white font-bold min-h-[80px]"
-              value={seoDescription}
-              onChange={(e) => onUpdateSeoDescription(e.target.value)}
-            />
-          </div>
-          <div className="form-control w-full">
-            <label className="label py-1"><span className="label-text text-white/50 font-bold text-[10px] uppercase tracking-widest">Share Image (OG Image) URL</span></label>
-            <div className="flex gap-2 items-center">
-              <input
-                type="text"
-                placeholder="https://..."
-                className="input input-sm bg-white/5 border-white/10 text-white font-bold h-10 flex-1 min-w-0"
-                value={ogImage}
-                onChange={(e) => onUpdateOgImage(e.target.value)}
-              />
-              <button
-                onClick={() => onUpdateOgImage("")}
-                className="btn btn-ghost btn-sm bg-white/5 border border-white/10 text-white/40 hover:text-white h-10 px-3 shrink-0"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-              </button>
-            </div>
-            <label className="label py-1">
-              <span className="label-text-alt text-white/20 text-[9px] italic line-clamp-1">Leave empty to use global default</span>
-            </label>
-          </div>
-        </section>
-
-        {/* Block List */}
-        <section>
-          <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mb-6">Page Architecture</h3>
-          <div className="space-y-3">
-            {blocks.length === 0 && (
-              <div className="text-white/20 text-sm italic py-4 text-center border border-dashed border-white/10 rounded-2xl">
-                No blocks added yet
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
+        {activeTab === 'architecture' && (
+          <>
+            <section className="space-y-4">
+              <h3 className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">Block Order</h3>
+              <div className="space-y-2">
+                {blocks.map((block, idx) => (
+                  <div
+                    key={idx}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, idx)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, idx)}
+                    onClick={() => onSelectIndex(selectedIndex === idx ? null : idx)}
+                    className={`group p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${selectedIndex === idx ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10' : 'bg-white/5 border-transparent hover:border-white/10'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-1.5 h-1.5 rounded-full ${selectedIndex === idx ? 'bg-primary' : 'bg-white/20'}`}></div>
+                      <span className="text-[11px] font-bold capitalize text-white">{block.type}</span>
+                    </div>
+                    <button onClick={(e) => { e.stopPropagation(); removeBlock(idx); }} className="opacity-0 group-hover:opacity-100 text-error/60 hover:text-error transition-all">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                  </div>
+                ))}
               </div>
-            )}
-            {blocks.map((block, idx) => (
-              <div
-                key={idx}
-                draggable
-                onDragStart={(e) => handleDragStart(e, idx)}
-                onDragOver={handleDragOver}
-                onDrop={(e) => handleDrop(e, idx)}
-                onDragEnd={() => setDraggedIndex(null)}
-                className={`group flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 cursor-move ${selectedIndex === idx
-                  ? "bg-primary/10 border-primary shadow-[0_0_20px_rgba(var(--p),0.1)]"
-                  : "bg-white/5 border-white/5 hover:border-white/20"
-                  } ${draggedIndex === idx ? "opacity-50 scale-95" : ""}`}
-                onClick={() => setSelectedIndex(idx)}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full transition-colors ${selectedIndex === idx ? "bg-primary shadow-[0_0_10px_rgba(var(--p),0.5)]" : "bg-white/20"}`}></div>
-                  <span className={`text-sm font-bold capitalize ${selectedIndex === idx ? "text-white" : "text-white/60"}`}>{block.type}</span>
+            </section>
+
+            <section className="space-y-4">
+              <h3 className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">Add Block</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {Object.keys(BLOCK_REGISTRY).map(type => (
+                  <button key={type} onClick={() => addBlock(type)} className="p-3 bg-white/5 border border-white/5 rounded-xl text-[10px] font-bold text-white/50 hover:bg-primary/20 hover:border-primary/30 hover:text-white transition-all text-center capitalize">
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </section>
+          </>
+        )}
+
+        {activeTab === 'page' && (
+          <section className="space-y-6">
+            <div className="space-y-4">
+              <h3 className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">General Info</h3>
+              <div className="form-control">
+                <label className="label py-1"><span className="label-text-alt text-white/30 font-black uppercase text-[8px] tracking-widest">Internal Page Title</span></label>
+                <input type="text" className="input input-sm bg-white/5 border-white/10 text-white font-bold h-10" value={title} onChange={(e) => onUpdateTitle(e.target.value)} />
+              </div>
+              <div className="form-control">
+                <label className="label py-1"><span className="label-text-alt text-white/30 font-black uppercase text-[8px] tracking-widest">URL Slug Path</span></label>
+                <div className="join w-full">
+                  <span className="join-item bg-white/5 border border-white/10 px-2 flex items-center text-white/20 text-xs">/</span>
+                  <input type="text" className="input input-sm bg-white/5 border-white/10 text-white font-bold h-10 join-item flex-1" value={slug} onChange={(e) => onUpdateSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))} />
                 </div>
-                <button
-                  onClick={(e) => { e.stopPropagation(); removeBlock(idx); }}
-                  className="opacity-0 group-hover:opacity-100 btn btn-ghost btn-xs text-error/60 hover:text-error transition-all"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                </button>
               </div>
-            ))}
-          </div>
-        </section>
+            </div>
 
-        {/* Property Editor */}
-        {selectedIndex !== null && blocks[selectedIndex] && (
-          <section className="bg-white/5 p-6 rounded-3xl border border-white/10 animate-in slide-in-from-bottom-4 duration-500 shadow-inner">
-            <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mb-6 flex items-center justify-between">
-              Attributes: {blocks[selectedIndex].type}
-              <button onClick={() => setSelectedIndex(null)} className="btn btn-ghost btn-xs text-white/20 hover:text-white">Close</button>
-            </h3>
-            <PropertyEditor
-              schema={BLOCK_REGISTRY[blocks[selectedIndex].type]?.Schema}
-              data={blocks[selectedIndex].data}
-              onChange={(newData) => updateBlockData(selectedIndex, newData)}
-            />
+            <div className="space-y-4">
+              <h3 className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">Page Styling</h3>
+              <div className="form-control">
+                <label className="label py-1"><span className="label-text-alt text-white/30 font-black uppercase text-[8px] tracking-widest">Background Color</span></label>
+                <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl p-3">
+                  <input 
+                    type="color" 
+                    className="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-none" 
+                    value={settings.backgroundColor || '#ffffff'} 
+                    onChange={(e) => onUpdateSettings({...settings, backgroundColor: e.target.value})} 
+                  />
+                  <div className="flex-1">
+                    <input 
+                      type="text" 
+                      className="bg-transparent border-none text-white font-mono text-[10px] w-full focus:outline-none" 
+                      value={settings.backgroundColor || '#ffffff'} 
+                      onChange={(e) => onUpdateSettings({...settings, backgroundColor: e.target.value})} 
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-5 gap-2 mt-3">
+                  {['#ffffff', '#000000', '#f8fafc', '#0f172a', '#334155'].map(color => (
+                    <button 
+                      key={color} 
+                      onClick={() => onUpdateSettings({...settings, backgroundColor: color})}
+                      className={`w-full aspect-square rounded-lg border border-white/10 transition-transform active:scale-95 ${settings.backgroundColor === color ? 'ring-2 ring-primary ring-offset-2 ring-offset-black' : ''}`}
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
           </section>
         )}
 
-        {/* Add Block */}
-        <section>
-          <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mb-6">Library</h3>
-          <div className="grid grid-cols-2 gap-3">
-            {Object.keys(BLOCK_REGISTRY).map((type) => (
-              <button
-                key={type}
-                onClick={() => addBlock(type)}
-                className="p-4 bg-white/5 border border-white/5 rounded-2xl text-xs font-bold text-white/60 hover:bg-white/10 hover:border-white/20 hover:text-white transition-all duration-300 flex flex-col items-center gap-3 active:scale-95 group"
-              >
-                <div className="p-2 bg-white/5 rounded-xl group-hover:bg-primary/20 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+        {activeTab === 'seo' && (
+          <section className="space-y-6">
+            <div className="form-control">
+              <label className="label py-1"><span className="label-text-alt text-white/30 font-black uppercase text-[8px] tracking-widest">Google / SEO Title</span></label>
+              <input type="text" className="input input-sm bg-white/5 border-white/10 text-white font-bold h-10" value={seoTitle} onChange={(e) => onUpdateSeoTitle(e.target.value)} />
+            </div>
+            <div className="form-control">
+              <label className="label py-1"><span className="label-text-alt text-white/30 font-black uppercase text-[8px] tracking-widest">Meta Description</span></label>
+              <textarea className="textarea textarea-sm bg-white/5 border-white/10 text-white font-bold min-h-[100px]" value={seoDescription} onChange={(e) => onUpdateSeoDescription(e.target.value)} />
+            </div>
+            <div className="form-control">
+              <label className="label py-1"><span className="label-text-alt text-white/30 font-black uppercase text-[8px] tracking-widest">Social Share Image</span></label>
+              <div className="flex gap-2">
+                <div className="flex-1 bg-white/5 border border-white/10 rounded-xl p-2 min-h-[100px] flex items-center justify-center relative overflow-hidden group">
+                  {ogImage ? (
+                    <img src={ogImage} className="absolute inset-0 w-full h-full object-cover opacity-40" alt="Preview" />
+                  ) : (
+                    <span className="text-[10px] font-bold text-white/10">No image chosen</span>
+                  )}
+                  <button onClick={onUpdateOgImage} className="relative z-10 btn btn-xs btn-primary font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all">Change</button>
                 </div>
-                <span className="capitalize">{type}</span>
-              </button>
-            ))}
-          </div>
-        </section>
+              </div>
+            </div>
+          </section>
+        )}
       </div>
     </aside>
   );

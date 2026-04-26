@@ -19,6 +19,7 @@ export const BackgroundVideoSchema = {
       { label: "Top Left", value: "items-start justify-start text-left" },
       { label: "Bottom Left", value: "items-end justify-start text-left" },
       { label: "Center Right", value: "items-center justify-end text-right" },
+      { label: "Center Left", value: "items-center justify-start text-left" },
       { label: "Top Center", value: "items-start justify-center text-center pt-24" },
     ],
     default: "items-center justify-center text-center"
@@ -33,6 +34,8 @@ export const BackgroundVideoSchema = {
       { label: "Medium (50% w)", value: "w-[50%] h-auto" },
       { label: "Small (25% w)", value: "w-[25%] h-auto" },
       { label: "Fit Height (100% h)", value: "h-full w-auto" },
+      { label: "Extra Wide (125% w)", value: "w-[125%] h-full" },
+      { label: "Double Wide (200% w)", value: "w-[200%] h-full" },
     ],
     default: "w-full h-full"
   },
@@ -51,6 +54,27 @@ export const BackgroundVideoSchema = {
       { label: "Bottom Right", value: "bottom-0 right-0" },
     ],
     default: "top-0 left-0"
+  },
+  objectPosition: {
+    type: "select",
+    label: "Video Focus/Alignment (Object Position)",
+    options: [
+      { label: "Center", value: "object-center" },
+      { label: "Left", value: "object-left" },
+      { label: "Right", value: "object-right" },
+      { label: "Top", value: "object-top" },
+      { label: "Bottom", value: "object-bottom" },
+    ],
+    default: "object-center"
+  },
+  horizontalOffset: {
+    type: "range",
+    label: "Manual Horizontal Shift",
+    min: -100,
+    max: 100,
+    step: 1,
+    unit: "%",
+    default: 0
   },
   children: {
     type: "blocks",

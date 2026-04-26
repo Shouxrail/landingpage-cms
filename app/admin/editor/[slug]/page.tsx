@@ -44,5 +44,6 @@ export default function AdminPage({ params }: { params: Promise<{ slug: string }
     initialSeoDescription={data?.seoDescription || ""}
     initialOgImage={data?.ogImage || ""}
     initialBlocks={data?.content?.blocks || []}
+    initialSettings={data?.content?.settings || { backgroundColor: "#ffffff" }}
   />;
 }

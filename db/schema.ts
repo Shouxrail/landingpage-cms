@@ -1,25 +1,30 @@
-import { mysqlTable, serial, varchar, text, timestamp, int, json } from "drizzle-orm/mysql-core";
+import { mysqlTable, serial, varchar, text, timestamp, int, json, bigint } from "drizzle-orm/mysql-core";
 
 export const landingPages = mysqlTable("landing_pages", {
-  id: serial("id").primaryKey(),
+  // id: serial("id").primaryKey(),
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   slug: varchar("slug", { length: 255 }).unique().notNull(),
   pageTitle: varchar("page_title", { length: 255 }).notNull(),
   content: json("content").$type<{
     blocks: Array<{
       type: string;
       data: any;
-    }>
+    }>;
+    settings?: {
+      backgroundColor?: string;
+    };
   }>(),
   status: varchar("status", { length: 255 }).default("draft"),
   seoTitle: varchar("seo_title", { length: 255 }),
   seoDescription: text("seo_description"),
   ogImage: varchar("og_image", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").onUpdateNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
 });
 
 export const media = mysqlTable("media", {
-  id: serial("id").primaryKey(),
+  // id: serial("id").primaryKey(),
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   fileName: varchar("file_name", { length: 255 }).notNull(),
   storagePath: varchar("storage_path", { length: 255 }).notNull(),
   mimeType: varchar("mime_type", { length: 100 }),
@@ -28,7 +33,8 @@ export const media = mysqlTable("media", {
 });
 
 export const siteSettings = mysqlTable("site_settings", {
-  id: serial("id").primaryKey(),
+  // id: serial("id").primaryKey(),
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   siteName: varchar("site_name", { length: 255 }).notNull().default("My Landing Page"),
   siteDescription: text("site_description"),
   baseUrl: varchar("base_url", { length: 255 }),
@@ -39,11 +45,12 @@ export const siteSettings = mysqlTable("site_settings", {
   gaId: varchar("ga_id", { length: 50 }),
   fbPixelId: varchar("fb_pixel_id", { length: 50 }),
   customHeadScripts: text("custom_head_scripts"),
-  updatedAt: timestamp("updated_at").onUpdateNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
 });
 
 export const users = mysqlTable("users", {
-  id: serial("id").primaryKey(),
+  // id: serial("id").primaryKey(),
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   username: varchar("username", { length: 255 }).unique().notNull(),
   password: varchar("password", { length: 255 }).notNull(), // Hashed password
   createdAt: timestamp("created_at").defaultNow(),
