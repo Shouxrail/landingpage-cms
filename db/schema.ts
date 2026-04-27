@@ -1,8 +1,9 @@
 import { mysqlTable, serial, varchar, text, timestamp, int, json, bigint } from "drizzle-orm/mysql-core";
+import { relations } from "drizzle-orm";
 
 export const landingPages = mysqlTable("landing_pages", {
-  // id: serial("id").primaryKey(),
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  id: serial("id").primaryKey(),
+  // id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   slug: varchar("slug", { length: 255 }).unique().notNull(),
   pageTitle: varchar("page_title", { length: 255 }).notNull(),
   content: json("content").$type<{
@@ -22,9 +23,13 @@ export const landingPages = mysqlTable("landing_pages", {
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
 });
 
+export const landingPagesRelations = relations(landingPages, ({ many }) => ({
+  submissions: many(formSubmissions),
+}));
+
 export const media = mysqlTable("media", {
-  // id: serial("id").primaryKey(),
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  id: serial("id").primaryKey(),
+  // id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   fileName: varchar("file_name", { length: 255 }).notNull(),
   storagePath: varchar("storage_path", { length: 255 }).notNull(),
   mimeType: varchar("mime_type", { length: 100 }),
@@ -33,8 +38,8 @@ export const media = mysqlTable("media", {
 });
 
 export const siteSettings = mysqlTable("site_settings", {
-  // id: serial("id").primaryKey(),
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  id: serial("id").primaryKey(),
+  // id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   siteName: varchar("site_name", { length: 255 }).notNull().default("My Landing Page"),
   siteDescription: text("site_description"),
   baseUrl: varchar("base_url", { length: 255 }),
@@ -45,13 +50,38 @@ export const siteSettings = mysqlTable("site_settings", {
   gaId: varchar("ga_id", { length: 50 }),
   fbPixelId: varchar("fb_pixel_id", { length: 50 }),
   customHeadScripts: text("custom_head_scripts"),
+  navigationMenu: json("navigation_menu").$type<{
+    items: Array<{
+      label: string;
+      url: string;
+      target?: "_self" | "_blank";
+    }>;
+  }>().default({ items: [] }),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
 });
 
 export const users = mysqlTable("users", {
-  // id: serial("id").primaryKey(),
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  id: serial("id").primaryKey(),
+  // id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   username: varchar("username", { length: 255 }).unique().notNull(),
   password: varchar("password", { length: 255 }).notNull(), // Hashed password
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const formSubmissions = mysqlTable("form_submissions", {
+  id: serial("id").primaryKey(),
+  // id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  pageId: bigint("page_id", { mode: "number", unsigned: true }).references(() => landingPages.id, { onDelete: "cascade" }),
+  formId: varchar("form_id", { length: 255 }), // Can be a custom name or block ID
+  data: json("data").notNull(), // JSON object of the submitted fields
+  userAgent: text("user_agent"),
+  userIp: varchar("user_ip", { length: 50 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const formSubmissionsRelations = relations(formSubmissions, ({ one }) => ({
+  page: one(landingPages, {
+    fields: [formSubmissions.pageId],
+    references: [landingPages.id],
+  }),
+}));

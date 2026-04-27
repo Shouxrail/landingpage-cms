@@ -1,5 +1,7 @@
 export const CardSchema = {
   bgColor: { type: "color", label: "Background Color", default: "" },
+  icon: { type: "image", label: "Card Icon", default: "" },
+  iconSize: { type: "range", label: "Icon Size (px)", min: 20, max: 200, step: 2, default: 48 },
   maxWidth: { type: "number", label: "Max Width Value" },
   maxWidthUnit: {
     type: "select",
@@ -35,6 +37,17 @@ export const CardSchema = {
   },
   suptitle: { type: "text", label: "Section Sup Title", default: "Our Features" },
   suptitleColor: { type: "color", label: "Sup Title Color", default: "" },
+  suptitleSize: {
+    type: "select",
+    label: "Sup Title Font Size",
+    options: [
+      { label: "Small", value: "text-sm" },
+      { label: "Base", value: "text-base" },
+      { label: "Large", value: "text-xl" },
+      { label: "Extra Large", value: "text-2xl" },
+    ],
+    default: "text-xl"
+  },
   title: { type: "text", label: "Section Title", default: "Our Features" },
   titleSize: {
     type: "select",
@@ -53,19 +66,6 @@ export const CardSchema = {
     default: "text-5xl"
   },
   titleColor: { type: "color", label: "Title Color", default: "#ffffff" },
-  description: { type: "textarea", label: "Section Description", default: "Discover what makes us stand out from the rest." },
-  descSize: {
-    type: "select",
-    label: "Description Font Size",
-    options: [
-      { label: "Small", value: "text-sm" },
-      { label: "Base", value: "text-base" },
-      { label: "Large", value: "text-xl" },
-      { label: "Extra Large", value: "text-2xl" },
-    ],
-    default: "text-lg"
-  },
-  descColor: { type: "color", label: "Description Color", default: "#ffffff" },
   buttons: {
     type: "objectList",
     label: "Action Buttons",
@@ -79,5 +79,12 @@ export const CardSchema = {
       bgHoverColor: { type: "color", label: "Background Hover Color", default: "#ffffff" }
     },
     default: []
+  },
+  children: {
+    type: "blocks",
+    label: "Block Content",
+    default: [
+      { type: "text", data: { content: "Discover what makes us stand out from the rest.", fontSize: "text-lg", align: "text-inherit" } },
+    ]
   }
 };

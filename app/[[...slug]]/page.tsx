@@ -1,8 +1,10 @@
+import React from "react";
 import { db } from "@/db";
-import { landingPages } from "@/db/schema";
 import { notFound } from "next/navigation";
 import BlockRenderer from "@/components/BlockRenderer";
 import { Metadata } from "next";
+import Navbar from "@/components/Navbar";
+import HashScrollHandler from "@/components/HashScrollHandler";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug?: string[] }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -54,8 +56,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
   };
 }
 
-import ViewportScaler from "@/components/ViewportScaler";
-
 export default async function Page({ params }: { params: Promise<{ slug?: string[] }> }) {
   const { slug } = await params;
   const slugString = slug ? slug.join("/") : "home";
@@ -70,13 +70,59 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
 
   if (!page) notFound();
 
+  const settings = await db.query.siteSettings.findFirst();
   const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content;
+  const isSnapScroll = content?.settings?.isSnapScroll || false;
+
+  const navbar = (
+    <Navbar
+      logoUrl={settings?.logoUrl}
+      siteName={settings?.siteName}
+      menuItems={settings?.navigationMenu?.items}
+    />
+  );
+
+  if (isSnapScroll) {
+    return (
+      <>
+        <HashScrollHandler />
+        {navbar}
+        <main className="h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar" style={{
+          backgroundColor: content?.settings?.backgroundColor || "transparent",
+          overflowX: 'hidden',
+          display: 'grid',
+          gridTemplateColumns: '1fr', // Ensures sections stack correctly
+          position: 'relative'
+        }}>
+          {content?.blocks?.map((block: any, index: number) => (
+            <div 
+              key={index}
+              id={block.data?.id || `section-${index}`}
+              className="relative h-screen w-full"
+              style={{ scrollSnapAlign: 'start' }}
+            >
+              <section
+                className="h-screen w-full sticky top-0 snap-center snap-always shrink-0 overflow-hidden shadow-2xl"
+                style={{ zIndex: index + 1 }}
+              >
+                <div className="h-screen w-full">
+                  <BlockRenderer blocks={[block]} />
+                </div>
+              </section>
+            </div>
+          ))}
+        </main>
+      </>
+    );
+  }
 
   return (
-    <main style={{ backgroundColor: content?.settings?.backgroundColor || "transparent", overflowX: 'hidden' }}>
-      {/* <ViewportScaler> */}
-      <BlockRenderer blocks={content?.blocks || []} />
-      {/* </ViewportScaler> */}
-    </main>
+    <>
+      <HashScrollHandler />
+      {navbar}
+      <main style={{ backgroundColor: content?.settings?.backgroundColor || "transparent", overflowX: 'hidden' }}>
+        <BlockRenderer blocks={content?.blocks || []} />
+      </main>
+    </>
   );
 }

@@ -10,6 +10,8 @@ import { TextBlock } from "@/blocks/TextBlock";
 import { ButtonBlock } from "@/blocks/ButtonBlock";
 import { SpacerBlock } from "@/blocks/SpacerBlock";
 import { CardBlock } from "@/blocks/Card";
+import { ListBlockPlugin } from "@/blocks/ListBlock";
+import { FormBlockPlugin } from "@/blocks/FormBlock";
 
 export const BLOCK_REGISTRY: Record<string, any> = {
   [HeroBlock.type]: HeroBlock,
@@ -23,5 +25,7 @@ export const BLOCK_REGISTRY: Record<string, any> = {
   [TextBlock.type]: TextBlock,
   [ButtonBlock.type]: ButtonBlock,
   [SpacerBlock.type]: SpacerBlock,
-  [CardBlock.type]: CardBlock
+  [CardBlock.type]: CardBlock,
+  [ListBlockPlugin.type]: ListBlockPlugin,
+  [FormBlockPlugin.type]: FormBlockPlugin
 };

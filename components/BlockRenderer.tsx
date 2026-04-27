@@ -10,6 +10,8 @@ import { TextBlockComponent } from "@/blocks/TextBlock/TextBlock";
 import { ButtonBlockComponent } from "@/blocks/ButtonBlock/ButtonBlock";
 import { SpacerBlockComponent } from "@/blocks/SpacerBlock/SpacerBlock";
 import Features from "@/blocks/Features/Features";
+import ListBlock from "@/blocks/ListBlock/ListBlock";
+import FormBlock from "@/blocks/FormBlock/FormBlock";
 
 const COMPONENTS: Record<string, any> = {
   hero: Hero,
@@ -24,24 +26,22 @@ const COMPONENTS: Record<string, any> = {
   text: TextBlockComponent,
   button: ButtonBlockComponent,
   spacer: SpacerBlockComponent,
+  list: ListBlock,
+  form: FormBlock
 };
 
 export default function BlockRenderer({ blocks }: { blocks: any[] }) {
   if (!blocks) return null;
 
-  return (
-    <>
-      {blocks.map((block, index) => {
-        const Component = COMPONENTS[block.type];
-        if (!Component) {
-          return (
-            <div key={index} className="p-4 bg-red-50 text-red-500 rounded-lg">
-              Block type "{block.type}" not found in registry.
-            </div>
-          );
-        }
-        return <Component key={index} data={block.data} />;
-      })}
-    </>
-  );
+  return blocks.map((block, index) => {
+    const Component = COMPONENTS[block.type];
+    if (!Component) {
+      return (
+        <div key={index} className="p-4 bg-red-50 text-red-500 rounded-lg snap-slide">
+          Block type "{block.type}" not found in registry.
+        </div>
+      );
+    }
+    return <Component key={index} data={block.data} />;
+  });
 }

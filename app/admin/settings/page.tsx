@@ -14,7 +14,8 @@ export default function SettingsPage() {
         faviconUrl: "",
         gaId: "",
         fbPixelId: "",
-        customHeadScripts: ""
+        customHeadScripts: "",
+        navigationMenu: { items: [] as { label: string; url: string; target?: "_self" | "_blank" }[] }
     });
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -25,7 +26,10 @@ export default function SettingsPage() {
         fetch("/api/admin/settings")
             .then(res => res.json())
             .then(data => {
-                setSettings(data);
+                setSettings({
+                    ...data,
+                    navigationMenu: data.navigationMenu || { items: [] }
+                });
                 setLoading(false);
             });
     }, []);
@@ -185,7 +189,96 @@ export default function SettingsPage() {
                     </div>
                 </div>
 
-                {/* Analytics & Scripts... (Keep previous) */}
+                {/* Navigation Menu Builder */}
+                <div className="card glass border border-white/10 shadow-2xl">
+                    <div className="card-body p-10 space-y-8">
+                        <h2 className="text-xl font-bold text-white mb-2 underline decoration-primary underline-offset-8">Navigation Menu Builder</h2>
+
+                        <div className="space-y-4">
+                            {settings.navigationMenu.items.map((item, idx) => (
+                                <div key={idx} className="flex gap-4 items-end bg-white/5 p-4 rounded-2xl border border-white/5 animate-in slide-in-from-left-4">
+                                    <div className="flex-1 space-y-4">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="form-control">
+                                                <label className="label py-1"><span className="label-text-alt text-white/30 font-black uppercase text-[8px] tracking-widest">Link Label</span></label>
+                                                <input
+                                                    type="text"
+                                                    className="input input-sm bg-white/5 border-white/10 text-white font-bold h-10"
+                                                    value={item.label}
+                                                    onChange={e => {
+                                                        const newItems = [...settings.navigationMenu.items];
+                                                        newItems[idx].label = e.target.value;
+                                                        setSettings({ ...settings, navigationMenu: { items: newItems } });
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="form-control">
+                                                <label className="label py-1"><span className="label-text-alt text-white/30 font-black uppercase text-[8px] tracking-widest">URL / Path</span></label>
+                                                <input
+                                                    type="text"
+                                                    className="input input-sm bg-white/5 border-white/10 text-white font-bold h-10"
+                                                    value={item.url}
+                                                    onChange={e => {
+                                                        const newItems = [...settings.navigationMenu.items];
+                                                        newItems[idx].url = e.target.value;
+                                                        setSettings({ ...settings, navigationMenu: { items: newItems } });
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const newItems = settings.navigationMenu.items.filter((_, i) => i !== idx);
+                                                setSettings({ ...settings, navigationMenu: { items: newItems } });
+                                            }}
+                                            className="btn btn-square btn-sm btn-ghost text-error/40 hover:text-error"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                        </button>
+                                        <div className="flex flex-col gap-1">
+                                            <button
+                                                type="button"
+                                                disabled={idx === 0}
+                                                onClick={() => {
+                                                    const newItems = [...settings.navigationMenu.items];
+                                                    [newItems[idx - 1], newItems[idx]] = [newItems[idx], newItems[idx - 1]];
+                                                    setSettings({ ...settings, navigationMenu: { items: newItems } });
+                                                }}
+                                                className="btn btn-square btn-xs btn-ghost text-white/20 hover:text-white"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 15l7-7 7 7" /></svg>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                disabled={idx === settings.navigationMenu.items.length - 1}
+                                                onClick={() => {
+                                                    const newItems = [...settings.navigationMenu.items];
+                                                    [newItems[idx], newItems[idx + 1]] = [newItems[idx + 1], newItems[idx]];
+                                                    setSettings({ ...settings, navigationMenu: { items: newItems } });
+                                                }}
+                                                className="btn btn-square btn-xs btn-ghost text-white/20 hover:text-white"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" /></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            <button
+                                type="button"
+                                onClick={() => setSettings({ ...settings, navigationMenu: { items: [...settings.navigationMenu.items, { label: "New Link", url: "/" }] } })}
+                                className="btn btn-outline border-dashed border-white/10 text-white/40 hover:text-primary hover:border-primary w-full h-14 rounded-2xl flex items-center justify-center gap-2"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" /></svg>
+                                Add Menu Item
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="card glass border border-white/10 shadow-2xl">
                     <div className="card-body p-10 space-y-8">
                         <h2 className="text-xl font-bold text-white mb-2 underline decoration-accent underline-offset-8">Analytics & Custom Scripts</h2>
@@ -206,7 +299,7 @@ export default function SettingsPage() {
                     </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-4 pointer-events-none">
+                <div className="flex flex-col items-end gap-4">
                     {success && (
                         <div className={`fixed flex items-center gap-2 top-4 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded-lg`}>
                             <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>

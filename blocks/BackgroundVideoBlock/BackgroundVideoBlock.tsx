@@ -13,7 +13,10 @@ export const BackgroundVideoBlockComponent = ({ data }: { data: any }) => {
     const childBlocks = data.children || [];
 
     return (
-        <section className={`relative w-screen h-screen flex overflow-hidden group`}>
+        <section id={data.id || ""}
+            className={`relative w-screen h-screen flex overflow-hidden group`}
+            style={{ backgroundColor: data.bgColor || '#000000' }}
+        >
             {/* Auto-playing muted background video */}
             <video
                 key={url}
@@ -32,9 +35,7 @@ export const BackgroundVideoBlockComponent = ({ data }: { data: any }) => {
 
             {/* Nested interactive generic foreground mapped via Layout config */}
             <div className={`relative z-20 w-full flex ${placement} lg:p-[100px] md:p-[40px]`}>
-                <div className="w-full">
-                    <BlockRenderer blocks={childBlocks} />
-                </div>
+                <BlockRenderer blocks={childBlocks} />
             </div>
         </section>
     );

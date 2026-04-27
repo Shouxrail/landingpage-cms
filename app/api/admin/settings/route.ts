@@ -31,7 +31,8 @@ export async function POST(req: Request) {
     faviconUrl,
     gaId,
     fbPixelId,
-    customHeadScripts
+    customHeadScripts,
+    navigationMenu
   } = body;
 
   const existing = await db.query.siteSettings.findFirst();
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
         gaId,
         fbPixelId,
         customHeadScripts,
+        navigationMenu,
         updatedAt: new Date() 
       })
       .where(eq(siteSettings.id, existing.id));
@@ -63,7 +65,8 @@ export async function POST(req: Request) {
       faviconUrl,
       gaId,
       fbPixelId,
-      customHeadScripts
+      customHeadScripts,
+      navigationMenu
     });
   }
 

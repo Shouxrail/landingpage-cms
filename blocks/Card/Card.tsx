@@ -1,23 +1,21 @@
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const BlockRenderer = dynamic(() => import("@/components/BlockRenderer"));
 
 export const Card = ({ data }: {
   data: {
     suptitle?: string;
     suptitleColor?: string;
+    suptitleSize?: string;
     title?: string;
     titleSize?: string;
     titleColor?: string;
-    description?: string;
-    descSize?: string;
-    descriptionSize?: string;
-    descColor?: string;
-    descriptionColor?: string;
     bgColor?: string;
     paddingY?: number;
     align?: string;
     maxWidth?: number;
     maxWidthUnit?: string;
-    overlayOpacity?: string;
     buttons?: {
       text: string;
       url: string;
@@ -27,11 +25,14 @@ export const Card = ({ data }: {
       bgColor?: string;
       bgHoverColor?: string;
     }[];
+    icon?: string;
+    iconSize?: number;
+    children?: any[];
   }
 }) => {
   const alignment = data.align || "items-center text-center";
   const paddingY = data.paddingY !== undefined ? `${data.paddingY}px` : "100px";
-  const overlay = data.overlayOpacity || "bg-transparent";
+  const childBlocks = data.children || [];
 
   const bgStyle: any = {
     paddingTop: paddingY,
@@ -46,17 +47,29 @@ export const Card = ({ data }: {
 
   return (
     <section
-      className={`relative px-6 flex flex-col ${alignment} w-full`}>
-      <div className="relative z-10 w-full transition-all duration-500" style={{ ...bgStyle, maxWidth }}>
+      className={`relative px-6 flex flex-col ${alignment} w-full`} style={{ ...bgStyle, maxWidth }}>
+      <div className="relative z-10 w-full transition-all duration-500">
         <div className={`w-full flex flex-col ${containerAlignClass} space-y-6`}>
-          {data.suptitle && (
-            <span
-              className="text-xs tracking-[0.3em] font-medium uppercase transition-all pb-2"
-              style={{ color: data.suptitleColor || 'var(--p)' }}
-            >
-              {data.suptitle}
-            </span>
-          )}
+          <div className="flex items-baseline self-start gap-3" style={data.icon ? {
+            transform: `translateX(-${(data.iconSize || 48) + 12}px)`,
+          } : {}}>
+            {data.icon && (
+              <img
+                src={data.icon}
+                alt=""
+                style={{ width: data.iconSize || 48, height: 'auto' }}
+                className="object-contain"
+              />
+            )}
+            {data.suptitle && (
+              <span
+                className={`${data.suptitleSize} ${data.icon ? "" : "tracking-[0.3em]"} font-medium transition-all`}
+                style={{ color: data.suptitleColor || 'var(--p)' }}
+              >
+                {data.suptitle}
+              </span>
+            )}
+          </div>
 
           {data.title && (
             <h2
@@ -67,14 +80,7 @@ export const Card = ({ data }: {
             </h2>
           )}
 
-          {data.description && (
-            <p
-              className={`${data.descSize || data.descriptionSize || "text-lg"} leading-relaxed transition-all duration-500 whitespace-pre-line`}
-              style={{ color: data.descColor || data.descriptionColor || 'rgba(255,255,255,0.6)' }}
-            >
-              {data.description}
-            </p>
-          )}
+          <BlockRenderer blocks={childBlocks} />
 
           {data.buttons && data.buttons.length > 0 && (
             <div className={`flex mt-6 flex-wrap gap-4 w-full justify-between`}>

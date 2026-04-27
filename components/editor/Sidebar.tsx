@@ -6,7 +6,7 @@ import { BLOCK_REGISTRY } from "@/lib/registry";
 interface SidebarProps {
   blocks: any[];
   onUpdateBlocks: (blocks: any[]) => void;
-  settings: { backgroundColor?: string };
+  settings: { backgroundColor?: string; isSnapScroll?: boolean };
   onUpdateSettings: (settings: any) => void;
   selectedIndex: number | null;
   onSelectIndex: (index: number | null) => void;
@@ -89,6 +89,9 @@ export default function Sidebar({
     <aside className="w-[30%] border-r border-white/5 bg-black/40 backdrop-blur-3xl flex flex-col h-full overflow-hidden">
       {/* TOP STATUS BAR */}
       <header className="h-14 border-b border-white/5 flex items-center justify-between px-6 bg-black/20">
+        <Link href="/admin/menu" className="btn btn-primary btn-sm h-9 px-6 rounded-lg text-white font-bold">
+          Back
+        </Link>
         <div className="flex items-center gap-4">
           <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{slug}</div>
         </div>
@@ -185,29 +188,42 @@ export default function Sidebar({
 
             <div className="space-y-4">
               <h3 className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">Page Styling</h3>
+
+              <div className="form-control">
+                <label className="label cursor-pointer flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl transition-colors hover:bg-white/10">
+                  <span className="label-text-alt text-white/50 font-black uppercase text-[8px] tracking-widest">Snap Scroll Animation</span>
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-primary toggle-xs"
+                    checked={settings.isSnapScroll || false}
+                    onChange={(e) => onUpdateSettings({ ...settings, isSnapScroll: e.target.checked })}
+                  />
+                </label>
+              </div>
+
               <div className="form-control">
                 <label className="label py-1"><span className="label-text-alt text-white/30 font-black uppercase text-[8px] tracking-widest">Background Color</span></label>
                 <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl p-3">
-                  <input 
-                    type="color" 
-                    className="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-none" 
-                    value={settings.backgroundColor || '#ffffff'} 
-                    onChange={(e) => onUpdateSettings({...settings, backgroundColor: e.target.value})} 
+                  <input
+                    type="color"
+                    className="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-none"
+                    value={settings.backgroundColor || '#ffffff'}
+                    onChange={(e) => onUpdateSettings({ ...settings, backgroundColor: e.target.value })}
                   />
                   <div className="flex-1">
-                    <input 
-                      type="text" 
-                      className="bg-transparent border-none text-white font-mono text-[10px] w-full focus:outline-none" 
-                      value={settings.backgroundColor || '#ffffff'} 
-                      onChange={(e) => onUpdateSettings({...settings, backgroundColor: e.target.value})} 
+                    <input
+                      type="text"
+                      className="bg-transparent border-none text-white font-mono text-[10px] w-full focus:outline-none"
+                      value={settings.backgroundColor || '#ffffff'}
+                      onChange={(e) => onUpdateSettings({ ...settings, backgroundColor: e.target.value })}
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-5 gap-2 mt-3">
                   {['#ffffff', '#000000', '#f8fafc', '#0f172a', '#334155'].map(color => (
-                    <button 
-                      key={color} 
-                      onClick={() => onUpdateSettings({...settings, backgroundColor: color})}
+                    <button
+                      key={color}
+                      onClick={() => onUpdateSettings({ ...settings, backgroundColor: color })}
                       className={`w-full aspect-square rounded-lg border border-white/10 transition-transform active:scale-95 ${settings.backgroundColor === color ? 'ring-2 ring-primary ring-offset-2 ring-offset-black' : ''}`}
                       style={{ backgroundColor: color }}
                     />

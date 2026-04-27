@@ -2,22 +2,24 @@ import dynamic from "next/dynamic";
 
 const BlockRenderer = dynamic(() => import("@/components/BlockRenderer"));
 
-export const Hero = ({ data }: { data: { 
-    bgColor?: string; 
-    bgImage?: string; 
-    paddingY?: number; 
-    align?: string; 
+export const Hero = ({ data }: {
+  data: {
+    bgColor?: string;
+    bgImage?: string;
+    paddingY?: number;
+    align?: string;
     overlayOpacity?: string;
     children?: any[];
-} }) => {
+  }
+}) => {
   const alignment = data.align || "items-center text-center";
   const paddingY = data.paddingY !== undefined ? `${data.paddingY}px` : "100px";
   const overlay = data.overlayOpacity || "bg-transparent";
   const childBlocks = data.children || [];
 
   const bgStyle: any = {
-      paddingTop: paddingY,
-      paddingBottom: paddingY,
+    paddingTop: paddingY,
+    paddingBottom: paddingY,
   };
 
   if (data.bgColor) bgStyle.backgroundColor = data.bgColor;
@@ -36,10 +38,10 @@ export const Hero = ({ data }: { data: {
     <section className={`${baseClass} flex flex-col ${alignment} overflow-hidden`} style={bgStyle}>
       {/* Background Image Overlay */}
       {data.bgImage && <div className={`absolute inset-0 z-0 ${overlay}`}></div>}
-      
+
       <div className="relative z-10 max-w-7xl mx-auto w-full">
         <div className={`w-full flex flex-col ${alignment}`}>
-            <BlockRenderer blocks={childBlocks} />
+          <BlockRenderer blocks={childBlocks} />
         </div>
       </div>
     </section>
