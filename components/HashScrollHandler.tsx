@@ -12,33 +12,37 @@ export default function HashScrollHandler() {
 
             const performScroll = (pos: number) => {
                 if (container) {
-                    // Temporarily disable snap scroll to allow smooth manual movement
-                    (container as HTMLElement).style.scrollSnapType = 'none';
+                    console.log('Scrolling to position:', pos);
+                    // Disable snap to allow smooth movement
+                    container.style.scrollSnapType = 'none';
 
                     container.scrollTo({ top: pos, behavior: 'smooth' });
 
-                    // Re-enable snap scroll sooner
+                    // Wait longer for the scroll to finish before re-enabling snap
                     setTimeout(() => {
-                        (container as HTMLElement).style.scrollSnapType = 'y mandatory';
-                        // Final alignment check
-                        if (pos === 0) container.scrollTop = 0;
-                    }, 500);
+                        container.style.scrollSnapType = 'y mandatory';
+                    }, 1000);
                 }
-                window.scrollTo({ top: pos, behavior: 'smooth' });
             };
 
             if (!hash || hash === '#' || hash === '#top') {
-                console.log('Home/Top detected, scrolling to 0');
                 performScroll(0);
                 return;
             }
 
-            if (target) {
-                console.log('Target element found:', target);
-                const targetTop = (target as HTMLElement).offsetTop;
-                performScroll(targetTop);
-            } else {
-                console.warn('Target element not found for:', hash);
+            if (target && container) {
+                // Find the index of the section to scroll to
+                // We look for direct children of the container that have the id or contain the target
+                const sections = Array.from(container.querySelectorAll(':scope > div, :scope > section'));
+                const index = sections.findIndex(s => s === target || s.contains(target));
+                
+                if (index !== -1) {
+                    console.log('Target section index found:', index);
+                    performScroll(index * container.clientHeight);
+                } else {
+                    // Fallback to offsetTop if index lookup fails
+                    performScroll((target as HTMLElement).offsetTop);
+                }
             }
         };
 

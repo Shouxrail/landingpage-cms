@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 interface NavbarProps {
-    logoUrl?: string;
+    logoUrl?: any;
     siteName?: string;
     menuItems?: { label: string; url: string; target?: string }[];
 }
@@ -26,7 +26,7 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
         // Intersection Observer for active section tracking
         const observerOptions = {
             root: null,
-            rootMargin: '-20% 0px -70% 0px', // Detect when section is near the top
+            rootMargin: '-50% 0px -50% 0px', // Look at the middle of the screen
             threshold: 0
         };
 
@@ -43,33 +43,53 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
 
         const observer = new IntersectionObserver(handleIntersection, observerOptions);
 
-        // Observe both the invisible anchors and the sections
-        const sections = document.querySelectorAll('main > div[id], main > section[id]');
-        sections.forEach(section => observer.observe(section));
+        // Function to refresh observations
+        const refreshObserver = () => {
+            observer.disconnect();
+            const sections = document.querySelectorAll('main > div[id], main > section[id]');
+            sections.forEach(section => observer.observe(section));
+        };
 
-        // Glassmorphism scroll detection
-        // Note: in snap scroll mode, we need to listen to the main container
+        refreshObserver();
+
+        // Glassmorphism scroll detection & Active Section Fallback
         const container = document.querySelector('main');
         const handleScroll = () => {
-            const scrollPos = container ? container.scrollTop : window.scrollY;
+            if (!container) return;
+            const scrollPos = container.scrollTop;
             setIsScrolled(scrollPos > 50);
+
+            // Fallback: If we're using snap scroll, we can calculate active section by scroll position
+            // This is more reliable for "scrolling up" in stacked layouts
+            if (getComputedStyle(container).scrollSnapType !== 'none') {
+                const index = Math.round(scrollPos / window.innerHeight);
+                const sections = document.querySelectorAll('main > div[id], main > section[id]');
+                const activeSection = sections[index];
+                if (activeSection && activeSection.id) {
+                    setActiveHash(`#${activeSection.id}`);
+                }
+            }
         };
 
         if (container) container.addEventListener("scroll", handleScroll);
         window.addEventListener("scroll", handleScroll);
+
+        // Also watch for DOM changes to re-observe if sections are added/removed
+        const mutationObserver = new MutationObserver(refreshObserver);
+        if (container) mutationObserver.observe(container, { childList: true });
 
         return () => {
             window.removeEventListener('hashchange', handleHashChange);
             if (container) container.removeEventListener("scroll", handleScroll);
             window.removeEventListener("scroll", handleScroll);
             observer.disconnect();
+            mutationObserver.disconnect();
         };
-    }, [menuItems]); // Re-run if menu items change to re-observe
+    }, [menuItems]); 
 
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 px-8 py-6 ${isScrolled ? "bg-black/40 backdrop-blur-xl border-b border-white/5 py-3" : "bg-transparent"
-                }`}
+            className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 px-8 py-6 bg-transparent`}
         >
             <div className="w-full mx-auto flex items-center justify-between">
                 {/* Logo Section */}

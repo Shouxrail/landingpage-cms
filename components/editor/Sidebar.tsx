@@ -202,6 +202,18 @@ export default function Sidebar({
               </div>
 
               <div className="form-control">
+                <label className="label cursor-pointer flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl transition-colors hover:bg-white/10">
+                  <span className="label-text-alt text-white/50 font-black uppercase text-[8px] tracking-widest">Title Reveal Animation</span>
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-primary toggle-xs"
+                    checked={settings.isTitleReveal || false}
+                    onChange={(e) => onUpdateSettings({ ...settings, isTitleReveal: e.target.checked })}
+                  />
+                </label>
+              </div>
+
+              <div className="form-control">
                 <label className="label py-1"><span className="label-text-alt text-white/30 font-black uppercase text-[8px] tracking-widest">Background Color</span></label>
                 <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl p-3">
                   <input

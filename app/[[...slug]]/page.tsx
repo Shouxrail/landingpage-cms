@@ -1,10 +1,10 @@
-import React from "react";
 import { db } from "@/db";
 import { notFound } from "next/navigation";
 import BlockRenderer from "@/components/BlockRenderer";
 import { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import HashScrollHandler from "@/components/HashScrollHandler";
+import SnapScrollContainer from "@/components/SnapScrollContainer";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug?: string[] }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -87,31 +87,12 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
       <>
         <HashScrollHandler />
         {navbar}
-        <main className="h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar" style={{
-          backgroundColor: content?.settings?.backgroundColor || "transparent",
-          overflowX: 'hidden',
-          display: 'grid',
-          gridTemplateColumns: '1fr', // Ensures sections stack correctly
-          position: 'relative'
-        }}>
-          {content?.blocks?.map((block: any, index: number) => (
-            <div 
-              key={index}
-              id={block.data?.id || `section-${index}`}
-              className="relative h-screen w-full"
-              style={{ scrollSnapAlign: 'start' }}
-            >
-              <section
-                className="h-screen w-full sticky top-0 snap-center snap-always shrink-0 overflow-hidden shadow-2xl"
-                style={{ zIndex: index + 1 }}
-              >
-                <div className="h-screen w-full">
-                  <BlockRenderer blocks={[block]} />
-                </div>
-              </section>
-            </div>
-          ))}
-        </main>
+        <SnapScrollContainer
+          blocks={content?.blocks || []}
+          siteName={settings?.siteName}
+          isTitleReveal={content?.settings?.isTitleReveal || false}
+          backgroundColor={content?.settings?.backgroundColor}
+        />
       </>
     );
   }
