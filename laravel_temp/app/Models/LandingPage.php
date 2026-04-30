@@ -8,12 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class LandingPage extends Model
 {
     protected $fillable = [
-        'slug', 'page_title', 'content', 'status',
+        'slug', 'page_title', 'content', 'mobile_content', 'status',
         'seo_title', 'seo_description', 'og_image',
     ];
 
     protected $casts = [
         'content' => 'array',
+        'mobile_content' => 'array',
     ];
 
     public function formSubmissions(): HasMany

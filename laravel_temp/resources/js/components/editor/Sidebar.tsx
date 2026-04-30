@@ -4,28 +4,30 @@ import Link from "next/link";
 import { BLOCK_REGISTRY } from "@/lib/registry";
 
 interface SidebarProps {
+  deviceMode?: "desktop" | "mobile";
   blocks: any[];
   onUpdateBlocks: (blocks: any[]) => void;
-  settings: { backgroundColor?: string; isSnapScroll?: boolean };
+  settings: { backgroundColor?: string; isSnapScroll?: boolean; isTitleReveal?: boolean };
   onUpdateSettings: (settings: any) => void;
   selectedIndex: number | null;
   onSelectIndex: (index: number | null) => void;
   title: string;
-  isSaving: boolean;
-  saveToMysql: (isPublish: boolean) => void;
   onUpdateTitle: (title: string) => void;
   status: string;
   slug: string;
   onUpdateSlug: (slug: string) => void;
   seoTitle: string;
-  onUpdateSeoTitle: (val: string) => void;
+  onUpdateSeoTitle: (title: string) => void;
   seoDescription: string;
-  onUpdateSeoDescription: (val: string) => void;
+  onUpdateSeoDescription: (desc: string) => void;
   ogImage: string;
-  onUpdateOgImage: () => void; // Trigger for media picker
+  onUpdateOgImage: (url: string) => void;
+  isSaving: boolean;
+  saveToMysql: (publish: boolean) => void;
 }
 
 export default function Sidebar({
+  deviceMode = "desktop",
   blocks,
   onUpdateBlocks,
   settings,
@@ -89,11 +91,14 @@ export default function Sidebar({
     <aside className="w-[30%] border-r border-white/5 bg-black/40 backdrop-blur-3xl flex flex-col h-full overflow-hidden">
       {/* TOP STATUS BAR */}
       <header className="h-14 border-b border-white/5 flex items-center justify-between px-6 bg-black/20">
-        <Link href="/admin/menu" className="btn btn-primary btn-sm h-9 px-6 rounded-lg text-white font-bold">
+        <Link href="/admin" className="btn btn-primary btn-sm h-9 px-6 rounded-lg text-white font-bold">
           Back
         </Link>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col items-center justify-center">
           <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{slug}</div>
+          {deviceMode === 'mobile' && (
+             <div className="text-[9px] font-bold text-primary uppercase tracking-widest mt-0.5 bg-primary/10 px-2 py-0.5 rounded">Mobile Blocks</div>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <button

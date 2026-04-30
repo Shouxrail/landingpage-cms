@@ -27,7 +27,7 @@ class MediaController extends Controller
         $request->validate(['file' => 'required|file|max:256000']);
 
         $file = $request->file('file');
-        $path = $file->store('media', 'public');
+        $path = "/storage/".$file->store('uploads', 'public');
 
         $media = Media::create([
             'file_name'    => $file->getClientOriginalName(),

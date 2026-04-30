@@ -29,6 +29,7 @@ class EditorController extends Controller
             'page_title'      => $request->input('pageTitle'),
             'slug'            => $request->input('slug'),
             'content'         => $request->input('content'),
+            'mobile_content'  => $request->input('mobileContent'),
             'status'          => $request->input('status'),
             'seo_title'       => $request->input('seoTitle'),
             'seo_description' => $request->input('seoDescription'),

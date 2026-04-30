@@ -1,11 +1,72 @@
-@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+@plugin "daisyui";
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: 'Outfit', var(--font-geist-sans), ui-sans-serif, system-ui;
+  --font-mono: var(--font-geist-mono);
+}
+
+@keyframes mesh-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-mesh {
+  background: linear-gradient(-45deg, #1e293b, #0f172a, #1e1b4b, #312e81);
+  background-size: 400% 400%;
+  animation: mesh-gradient 15s ease infinite;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Outfit', sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* This adds a slight darkening effect to the slide being covered */
+section.sticky + section.sticky {
+  z-index: 10;
+}
+
+section.sticky:not(:last-child) {
+  /* You can add a transition here if you use an Intersection Observer 
+     to detect when a section is being covered */
+}
+
+/* Add this to your global CSS */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.slashicon-active::before {
+  content: '/';
+  color: #05FD2A;
+  font-size: 24px;
+  transition: color 0.3s ease-in-out;
+}
+
+.slashicon-hover:hover::before {
+  content: '/';
+  color: white;
+  font-size: 24px;
+  transition: color 0.3s ease-in-out;
 }

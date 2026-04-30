@@ -1,12 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import axios from "axios";
 
 interface Media {
     id: number;
-    fileName: string;
-    storagePath: string;
-    mimeType: string;
+    file_name: string;
+    storage_path: string;
+    mime_type: string;
     size: number;
 }
 
@@ -29,12 +30,11 @@ export default function MediaPicker({ onSelect, onClose, title = "Select Media" 
 
     const fetchMedia = async () => {
         try {
-            const res = await fetch("/api/admin/media");
-            const data = await res.json();
-            if (Array.isArray(data)) {
-                setMediaItems(data);
+            const res = await axios.get("/admin/api/media");
+            if (Array.isArray(res.data)) {
+                setMediaItems(res.data);
             } else {
-                console.error("API returned non-array:", data);
+                console.error("API returned non-array:", res.data);
                 setMediaItems([]);
             }
         } catch (err) {
@@ -54,22 +54,17 @@ export default function MediaPicker({ onSelect, onClose, title = "Select Media" 
         formData.append("file", file);
 
         try {
-            const res = await fetch("/api/admin/media", {
-                method: "POST",
-                body: formData,
-            });
-            const data = await res.json().catch(() => null);
-            if (res.ok) {
+            const res = await axios.post("/admin/media", formData);
+            if (res.data) {
                 fetchMedia();
-                if (data?.storagePath) {
-                    onSelect(data.storagePath);
+                if (res.data.storage_path) {
+                    onSelect(res.data.storage_path);
                 }
-            } else {
-                alert(`Upload failed: ${data?.error || res.statusText || "Unknown error"}\n${data?.details || ""}`);
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error("Upload failed", err);
-            alert(`Upload system failed: ${String(err)}`);
+            const errorMsg = err.response?.data?.error || err.message || "Unknown error";
+            alert(`Upload failed: ${errorMsg}`);
         } finally {
             setIsUploading(false);
         }
@@ -115,24 +110,24 @@ export default function MediaPicker({ onSelect, onClose, title = "Select Media" 
                                 <div
                                     key={item.id}
                                     className="group relative aspect-square bg-white/5 border border-white/5 overflow-hidden cursor-pointer hover:border-primary/50 transition-all duration-300 active:scale-95 shadow-lg"
-                                    onClick={() => onSelect(item.storagePath)}
+                                    onClick={() => onSelect(item.storage_path)}
                                 >
-                                    {item.mimeType?.startsWith('video/') || item.fileName.match(/\.(mp4|webm|ogg|mov)$/i) ? (
+                                    {item.mime_type?.startsWith('video/') || item.file_name?.match(/\.(mp4|webm|ogg|mov)$/i) ? (
                                         <video
-                                            src={item.storagePath}
+                                            src={item.storage_path}
                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 pointer-events-none"
                                             muted
                                             playsInline
                                         />
                                     ) : (
                                         <img
-                                            src={item.storagePath}
-                                            alt={item.fileName}
+                                            src={item.storage_path}
+                                            alt={item.file_name}
                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                         />
                                     )}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-                                        <p className="text-[10px] font-bold text-white truncate max-w-full">{item.fileName}</p>
+                                        <p className="text-[10px] font-bold text-white truncate max-w-full">{item.file_name}</p>
                                         <p className="text-[8px] font-black text-white/40 uppercase tracking-widest mt-1">{(item.size / 1024).toFixed(1)} KB</p>
                                     </div>
                                 </div>

@@ -15,4 +15,6 @@ class SiteSetting extends Model
     protected $casts = [
         'navigation_menu' => 'array',
     ];
+
+    const CREATED_AT = null;
 }

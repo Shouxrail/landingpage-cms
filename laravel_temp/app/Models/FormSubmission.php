@@ -17,4 +17,6 @@ class FormSubmission extends Model
     {
         return $this->belongsTo(LandingPage::class, 'page_id');
     }
+
+    const UPDATED_AT = null;
 }
