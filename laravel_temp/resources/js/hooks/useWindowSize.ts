@@ -1,0 +1,25 @@
+"use client"
+import { useState, useEffect } from 'react';
+
+export default function useWindowSize() {
+    const [windowSize, setWindowSize] = useState({
+        width: 0,
+        height: 0,
+    });
+
+    useEffect(() => {
+        function handleResize() {
+            setWindowSize({
+                width: window.innerWidth,
+                height: window.innerHeight,
+            });
+        }
+
+        window.addEventListener("resize", handleResize);
+        handleResize(); // Call immediately to update state with initial size
+
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    return windowSize;
+}
