@@ -4,7 +4,7 @@ export const ListBlockSchema = {
     label: "List Items",
     itemSchema: {
       title: { type: "text", label: "Item Title", default: "List Item Title" },
-      content: { type: "textarea", label: "Item Content", default: "Content for the list item goes here. You can add details and explanations." },
+      contentBlocks: { type: "blocks", label: "Content Blocks", default: [] },
       defaultOpen: { 
         type: "select", 
         label: "Default State", 
@@ -18,8 +18,8 @@ export const ListBlockSchema = {
       urlText: { type: "text", label: "Link URL Text (optional)", default: "" },
     },
     default: [
-      { title: "What is this feature?", content: "This is a detailed explanation of the feature.", defaultOpen: "false" },
-      { title: "How does it work?", content: "It works by using advanced algorithms and a simple UI.", defaultOpen: "false" }
+      { title: "What is this feature?", contentBlocks: [], defaultOpen: "false" },
+      { title: "How does it work?", contentBlocks: [], defaultOpen: "false" }
     ]
   },
   bgColor: { type: "color", label: "Background Color", default: "transparent" },
