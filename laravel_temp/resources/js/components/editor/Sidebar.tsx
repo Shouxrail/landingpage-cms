@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import { Link } from "@inertiajs/react";
 import { BLOCK_REGISTRY } from "@/lib/registry";
 
 interface SidebarProps {
@@ -21,9 +21,11 @@ interface SidebarProps {
   seoDescription: string;
   onUpdateSeoDescription: (desc: string) => void;
   ogImage: string;
-  onUpdateOgImage: (url: string) => void;
+  onUpdateOgImage: () => void;
   isSaving: boolean;
   saveToMysql: (publish: boolean) => void;
+  setDeviceMode: (mode: "desktop" | "mobile") => void;
+  setSelectedIndex: (index: number | null) => void;
 }
 
 export default function Sidebar({
@@ -47,27 +49,43 @@ export default function Sidebar({
   onUpdateSeoDescription,
   ogImage,
   onUpdateOgImage,
+  setDeviceMode,
+  setSelectedIndex
 }: SidebarProps) {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'architecture' | 'page' | 'seo'>('architecture');
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverIndex(index);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
   };
 
   const handleDrop = (e: React.DragEvent, index: number) => {
     e.preventDefault();
-    if (draggedIndex === null || draggedIndex === index) return;
-
+    if (draggedIndex === null || draggedIndex === index) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
     const newBlocks = [...blocks];
     const [movedBlock] = newBlocks.splice(draggedIndex, 1);
     newBlocks.splice(index, 0, movedBlock);
     onUpdateBlocks(newBlocks);
+    onSelectIndex(index);
     setDraggedIndex(null);
+    setDragOverIndex(null);
   };
 
   const addBlock = (type: string) => {
@@ -97,7 +115,7 @@ export default function Sidebar({
         <div className="flex flex-col items-center justify-center">
           <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{slug}</div>
           {deviceMode === 'mobile' && (
-             <div className="text-[9px] font-bold text-primary uppercase tracking-widest mt-0.5 bg-primary/10 px-2 py-0.5 rounded">Mobile Blocks</div>
+            <div className="text-[9px] font-bold text-primary uppercase tracking-widest mt-0.5 bg-primary/10 px-2 py-0.5 rounded">Mobile Blocks</div>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -138,18 +156,31 @@ export default function Sidebar({
           <>
             <section className="space-y-4">
               <h3 className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">Block Order</h3>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {blocks.map((block, idx) => (
                   <div
                     key={idx}
                     draggable
                     onDragStart={(e) => handleDragStart(e, idx)}
-                    onDragOver={handleDragOver}
+                    onDragOver={(e) => handleDragOver(e, idx)}
+                    onDragEnd={handleDragEnd}
                     onDrop={(e) => handleDrop(e, idx)}
                     onClick={() => onSelectIndex(selectedIndex === idx ? null : idx)}
-                    className={`group p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${selectedIndex === idx ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10' : 'bg-white/5 border-transparent hover:border-white/10'}`}
+                    className={`group p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between
+                      ${dragOverIndex === idx && draggedIndex !== idx ? 'border-primary/60 bg-primary/5 scale-[1.01]' : ''}
+                      ${draggedIndex === idx ? 'opacity-40 scale-95' : ''}
+                      ${selectedIndex === idx && draggedIndex !== idx ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10' : 'bg-white/5 border-transparent hover:border-white/10'}
+                    `}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      {/* Grip handle */}
+                      <div className="text-white/20 hover:text-white/50 cursor-grab active:cursor-grabbing shrink-0" title="Drag to reorder">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
+                          <circle cx="9" cy="5" r="1.5" /><circle cx="15" cy="5" r="1.5" />
+                          <circle cx="9" cy="12" r="1.5" /><circle cx="15" cy="12" r="1.5" />
+                          <circle cx="9" cy="19" r="1.5" /><circle cx="15" cy="19" r="1.5" />
+                        </svg>
+                      </div>
                       <div className={`w-1.5 h-1.5 rounded-full ${selectedIndex === idx ? 'bg-primary' : 'bg-white/20'}`}></div>
                       <span className="text-[11px] font-bold capitalize text-white">{block.type}</span>
                     </div>
@@ -176,8 +207,28 @@ export default function Sidebar({
 
         {activeTab === 'page' && (
           <section className="space-y-6">
+
             <div className="space-y-4">
               <h3 className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">General Info</h3>
+              {/* TOP VIEWPORT TOGGLE BAR */}
+              <div className="h-14 bg-black/40 backdrop-blur-md flex items-center justify-center gap-2 z-10">
+                <div className="bg-white/5 p-1 rounded-xl flex gap-1 border border-white/10">
+                  <button
+                    onClick={() => { setDeviceMode('desktop'); setSelectedIndex(null); }}
+                    className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${deviceMode === 'desktop' ? 'bg-primary text-white shadow-lg' : 'text-white/40 hover:text-white/80 hover:bg-white/5'}`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    Desktop
+                  </button>
+                  <button
+                    onClick={() => { setDeviceMode('mobile'); setSelectedIndex(null); }}
+                    className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${deviceMode === 'mobile' ? 'bg-primary text-white shadow-lg' : 'text-white/40 hover:text-white/80 hover:bg-white/5'}`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                    Mobile
+                  </button>
+                </div>
+              </div>
               <div className="form-control">
                 <label className="label py-1"><span className="label-text-alt text-white/30 font-black uppercase text-[8px] tracking-widest">Internal Page Title</span></label>
                 <input type="text" className="input input-sm bg-white/5 border-white/10 text-white font-bold h-10" value={title} onChange={(e) => onUpdateTitle(e.target.value)} />
@@ -270,7 +321,7 @@ export default function Sidebar({
                   ) : (
                     <span className="text-[10px] font-bold text-white/10">No image chosen</span>
                   )}
-                  <button onClick={onUpdateOgImage} className="relative z-10 btn btn-xs btn-primary font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all">Change</button>
+                  <button onClick={() => onUpdateOgImage()} className="relative z-10 btn btn-xs btn-primary font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all">Change</button>
                 </div>
               </div>
             </div>

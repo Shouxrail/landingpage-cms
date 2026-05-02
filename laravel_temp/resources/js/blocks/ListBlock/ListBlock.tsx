@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@inertiajs/react";
 
 export const ListBlock = ({ data }: {
   data: {
@@ -22,7 +22,7 @@ export const ListBlock = ({ data }: {
         <li key={index} className={`${data.titleSize} ${spacing}`}> {/* This handles the bullet naturally */}
           <div className="inline-block w-full"> {/* Keeps the details component behaving nicely */}
             <details
-              className="group rounded-2xl transition-all duration-300 overflow-hidden border"
+              className="group transition-all duration-300 overflow-hidden border"
               style={{
                 backgroundColor: bgColor,
                 borderColor: data.borderColor || 'rgba(255,255,255,0.1)',
@@ -31,7 +31,7 @@ export const ListBlock = ({ data }: {
               }}
               open={item.defaultOpen === "true"}
             >
-              <summary className={`flex items-center list-none cursor-pointer select-none hover:bg-white/5`}>
+              <summary className={`flex items-center list-none select-none ${item.content !== null && item.content !== "" ? "hover:bg-white/5 cursor-pointer" : ""}`}>
                 <div className="flex-1">
                   <span>{item.title}</span>
                   {item.url && (
@@ -42,13 +42,13 @@ export const ListBlock = ({ data }: {
                     </span>
                   )}
                 </div>
-                {item.content !== "" && (
+                {item.content !== null && item.content !== "" && (
                   <span className="transition-transform duration-300 group-open:-rotate-180 ml-2">
                     <svg fill="none" height="20" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
                   </span>
                 )}
               </summary>
-              {item.content !== "" && (
+              {item.content !== null && item.content !== "" && (
                 <div className={`${data.textContentSize} p-5 pt-0 opacity-70 whitespace-pre-line`}>
                   {item.content}
                 </div>

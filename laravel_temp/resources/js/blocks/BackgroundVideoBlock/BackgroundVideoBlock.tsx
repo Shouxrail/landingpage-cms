@@ -1,6 +1,5 @@
-import dynamic from "next/dynamic";
-
-const BlockRenderer = dynamic(() => import("@/components/BlockRenderer"));
+import { lazy, Suspense } from "react";
+const BlockRenderer = lazy(() => import("@/components/BlockRenderer"));
 
 export const BackgroundVideoBlockComponent = ({ data }: { data: any }) => {
     const url = data.url || "https://www.w3schools.com/html/mov_bbb.mp4";
@@ -10,12 +9,17 @@ export const BackgroundVideoBlockComponent = ({ data }: { data: any }) => {
     const videoPlacement = data.videoPlacement || "top-0 left-0";
     const objectPosition = data.objectPosition || "object-center";
     const horizontalOffset = data.horizontalOffset || 0;
+    const horizontalPadding = data.horizontalPadding || 0;
     const childBlocks = data.children || [];
 
     return (
         <section id={data.id || ""}
             className={`relative w-screen h-screen flex overflow-hidden group`}
-            style={{ backgroundColor: data.bgColor || '#000000' }}
+            style={{
+                backgroundColor: data.bgColor || '#000000',
+                paddingLeft: `${horizontalPadding || 0}px`,
+                paddingRight: `${horizontalPadding || 0}px`,
+            }}
         >
             {/* Auto-playing muted background video */}
             <video
@@ -34,8 +38,10 @@ export const BackgroundVideoBlockComponent = ({ data }: { data: any }) => {
             <div className={`absolute top-0 left-0 w-full h-full z-10 transition-colors duration-500 ${opacity}`}></div>
 
             {/* Nested interactive generic foreground mapped via Layout config */}
-            <div className={`relative z-20 w-full flex ${placement} lg:p-[100px] md:p-[40px]`}>
-                <BlockRenderer blocks={childBlocks} />
+            <div className={`relative z-20 w-full flex ${placement}`}>
+                <Suspense fallback={null}>
+                    <BlockRenderer blocks={childBlocks} />
+                </Suspense>
             </div>
         </section>
     );

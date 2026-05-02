@@ -4,6 +4,7 @@ export const TextSchema = {
     type: "select",
     label: "Font Size",
     options: [
+      { label: "Extral Small", value: "text-xs" },
       { label: "Small", value: "text-sm" },
       { label: "Base", value: "text-base" },
       { label: "Large", value: "text-lg" },
@@ -37,4 +38,16 @@ export const TextSchema = {
   },
   marginTop: { type: "range", label: "Margin Top (px)", min: 0, max: 100, step: 4, default: 0 },
   marginBottom: { type: "range", label: "Margin Bottom (px)", min: 0, max: 100, step: 4, default: 8 },
+  letterSpacing: { type: "range", label: "Letter Spacing (em)", min: -0.1, max: 0.5, step: 0.01, default: 0 },
+  links: {
+    type: "objectList",
+    label: "Custom Links",
+    default: [],
+    itemSchema: {
+      text: { type: "text", label: "Display Text (must match text in content)" },
+      url: { type: "text", label: "URL" },
+      newTab: { type: "boolean", label: "Open in new tab?", default: true },
+      underline: { type: "boolean", label: "Show underline?", default: true },
+    }
+  },
 };

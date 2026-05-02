@@ -1,7 +1,6 @@
-import Link from "next/link";
-import dynamic from "next/dynamic";
-
-const BlockRenderer = dynamic(() => import("@/components/BlockRenderer"));
+import { Link } from "@inertiajs/react";
+import { lazy, Suspense } from "react";
+const BlockRenderer = lazy(() => import("@/components/BlockRenderer"));
 
 export const Card = ({ data }: {
   data: {
@@ -80,7 +79,9 @@ export const Card = ({ data }: {
             </h2>
           )}
 
-          <BlockRenderer blocks={childBlocks} />
+          <Suspense fallback={null}>
+            <BlockRenderer blocks={childBlocks} />
+          </Suspense>
 
           {data.buttons && data.buttons.length > 0 && (
             <div className={`flex mt-6 flex-wrap gap-4 w-full justify-between`}>

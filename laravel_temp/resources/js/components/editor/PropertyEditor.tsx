@@ -249,6 +249,22 @@ export default function PropertyEditor({ schema, data, onChange }: PropertyEdito
           );
         }
 
+        if (config.type === "boolean") {
+          return (
+            <div key={key} className="form-control w-full flex flex-row items-center justify-between py-3 border-b border-white/5 last:border-0">
+              <label className="label p-0 flex-1 cursor-pointer">
+                <span className="label-text-alt text-white/70 font-bold uppercase tracking-widest text-[10px]">{config.label}</span>
+              </label>
+              <input
+                type="checkbox"
+                className="toggle toggle-sm toggle-primary bg-white/10"
+                checked={!!value}
+                onChange={(e) => onChange({ ...data, [key]: e.target.checked })}
+              />
+            </div>
+          );
+        }
+
         if (config.type === "blocks") {
           return (
             <div key={key} className="form-control w-full space-y-4">

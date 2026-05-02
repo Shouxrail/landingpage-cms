@@ -2,6 +2,7 @@ import BlockRenderer from '@/components/BlockRenderer';
 import Navbar from '@/components/Navbar';
 import SnapScrollContainer from '@/components/SnapScrollContainer';
 import HashScrollHandler from '@/components/HashScrollHandler';
+import { Head } from '@inertiajs/react';
 
 interface LandingProps {
     page: {
@@ -16,10 +17,15 @@ interface LandingProps {
             };
         };
         mobile_content?: any;
+        seo_title?: string;
+        seo_description?: string;
+        og_image?: string;
     };
     settings: {
         site_name?: string;
         logo_url?: string;
+        favicon_url?: string;
+        seo_title_template?: string;
         navigation_menu?: { items: { label: string; url: string; target?: string }[] };
     };
 }
@@ -42,9 +48,27 @@ export default function Landing({ page, settings }: LandingProps) {
         />
     );
 
+    const rawTitle = page.seo_title || page.page_title || 'Landing Page';
+    let finalTitle = rawTitle;
+    if (settings?.seo_title_template) {
+        finalTitle = settings.seo_title_template.replace('%s', rawTitle);
+    } else if (settings?.site_name) {
+        finalTitle = `${rawTitle} | ${settings.site_name}`;
+    }
+
+    const headContent = (
+        <Head>
+            <title>{finalTitle}</title>
+            {settings?.favicon_url && <link rel="icon" href={settings.favicon_url} />}
+            {page.seo_description && <meta name="description" content={page.seo_description} />}
+            {page.og_image && <meta property="og:image" content={page.og_image} />}
+        </Head>
+    );
+
     if (isSnapScroll) {
         return (
             <>
+                {headContent}
                 <HashScrollHandler />
                 {navbar}
                 {hasMobileBlocks ? (
@@ -80,6 +104,7 @@ export default function Landing({ page, settings }: LandingProps) {
 
     return (
         <>
+            {headContent}
             <HashScrollHandler />
             {navbar}
             <main style={{ backgroundColor: pageSettings.backgroundColor || 'transparent', overflowX: 'hidden' }}>

@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 
 interface AdminLayoutProps {
     children: ReactNode;
@@ -7,9 +7,18 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children, title = 'Admin Dashboard' }: AdminLayoutProps) {
+    const { settings } = usePage<any>().props;
+
+    let finalTitle = title;
+    if (settings?.seo_title_template) {
+        finalTitle = settings.seo_title_template.replace('%s', title);
+    } else if (settings?.site_name) {
+        finalTitle = `${title} | ${settings.site_name}`;
+    }
+
     return (
         <div className="min-h-screen animate-mesh flex flex-col bg-[#050505] selection:bg-primary/30 relative overflow-hidden">
-            <Head title={title} />
+            <Head title={finalTitle} />
             
             {/* Shared Background Decorative Elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">

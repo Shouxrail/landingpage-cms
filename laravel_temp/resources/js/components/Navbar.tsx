@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import { Link } from "@inertiajs/react";
 
 interface NavbarProps {
     logoUrl?: any;
@@ -85,11 +85,11 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
             observer.disconnect();
             mutationObserver.disconnect();
         };
-    }, [menuItems]); 
+    }, [menuItems]);
 
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 px-8 py-6 bg-transparent`}
+            className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 px-8 py-6 bg-[rgba(0,0,0,0.35)] backdrop-blur-[4px]`}
         >
             <div className="w-full mx-auto flex items-center justify-between">
                 {/* Logo Section */}
@@ -114,27 +114,55 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
                 {/* Desktop Menu */}
                 <div className="hidden md:flex items-center gap-8">
                     {menuItems.map((item, idx) => {
-                        const isAnchor = item.url.startsWith('#');
+                        const hasHash = item.url.includes('#');
                         const isHome = item.url === '/' || item.url === '';
+
+                        // Parse path and hash parts from URL like "/page#section"
+                        const [urlPath, urlHashFragment] = item.url.split('#');
+                        const hashPart = hasHash ? `#${urlHashFragment}` : '';
+                        const pathPart = urlPath || '/';
+
+                        const isActive = hasHash
+                            ? activeHash === hashPart
+                            : window.location.pathname === (item.url || '/');
+                        const linkClass = `${isActive ? 'slashicon-active' : 'slashicon-hover'} text-[16px] font-bold tracking-[15%] text-white hover:text-white/70 transition-colors`;
+
+                        if (hasHash) {
+                            return (
+                                <a
+                                    key={idx}
+                                    href={item.url}
+                                    className={linkClass}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (window.location.pathname === pathPart) {
+                                            // Same page → just scroll to hash
+                                            window.location.hash = hashPart;
+                                            setTimeout(() => window.dispatchEvent(new Event('scroll-to-hash')), 10);
+                                        } else {
+                                            // Different page → full navigation
+                                            window.location.href = item.url;
+                                        }
+                                    }}
+                                >
+                                    {item.label}
+                                </a>
+                            );
+                        }
 
                         return (
                             <Link
                                 key={idx}
-                                href={item.url}
+                                href={item.url || '/'}
                                 target={item.target}
-                                scroll={!isAnchor && !isHome}
-                                onClick={(e) => {
-                                    if (isAnchor || isHome) {
-                                        if (isAnchor) window.location.hash = item.url;
-                                        if (isHome) {
-                                            // For home/root, we remove hash and scroll to top
-                                            window.history.pushState("", document.title, window.location.pathname + window.location.search);
-                                        }
+                                preserveScroll={isHome}
+                                onClick={() => {
+                                    if (isHome) {
+                                        window.history.pushState("", document.title, window.location.pathname + window.location.search);
                                         setTimeout(() => window.dispatchEvent(new Event('scroll-to-hash')), 10);
                                     }
-                                    // setActiveHash(item.url);
                                 }}
-                                className={`${activeHash === item.url ? 'slashicon-active' : 'slashicon-hover'} text-[16px] font-bold tracking-[15%] text-white hover:text-white/70 transition-colors`}
+                                className={linkClass}
                             >
                                 {item.label}
                             </Link>
@@ -157,25 +185,45 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
             {isMobileMenuOpen && (
                 <div className="md:hidden absolute top-full left-0 right-0 bg-black/90 backdrop-blur-3xl border-b border-white/10 p-8 space-y-6 animate-in slide-in-from-top-4">
                     {menuItems.map((item, idx) => {
-                        const isAnchor = item.url.startsWith('#');
+                        const hasHash = item.url.includes('#');
                         const isHome = item.url === '/' || item.url === '';
+                        const [urlPath, urlHashFragment] = item.url.split('#');
+                        const hashPart = hasHash ? `#${urlHashFragment}` : '';
+                        const pathPart = urlPath || '/';
+
+                        if (hasHash) {
+                            return (
+                                <a
+                                    key={idx}
+                                    href={item.url}
+                                    className="block text-lg font-bold text-white/70 hover:text-white"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsMobileMenuOpen(false);
+                                        if (window.location.pathname === pathPart) {
+                                            window.location.hash = hashPart;
+                                            setTimeout(() => window.dispatchEvent(new Event('scroll-to-hash')), 10);
+                                        } else {
+                                            window.location.href = item.url;
+                                        }
+                                    }}
+                                >
+                                    {item.label}
+                                </a>
+                            );
+                        }
 
                         return (
                             <Link
                                 key={idx}
-                                href={item.url}
-                                scroll={!isAnchor && !isHome}
+                                href={item.url || '/'}
+                                preserveScroll={isHome}
                                 onClick={() => {
-                                    if (isAnchor || isHome) {
-                                        console.log('Mobile nav item clicked:', item.url);
-                                        if (isAnchor) window.location.hash = item.url;
-                                        if (isHome) {
-                                            window.history.pushState("", document.title, window.location.pathname + window.location.search);
-                                        }
+                                    setIsMobileMenuOpen(false);
+                                    if (isHome) {
+                                        window.history.pushState("", document.title, window.location.pathname + window.location.search);
                                         setTimeout(() => window.dispatchEvent(new Event('scroll-to-hash')), 10);
                                     }
-                                    setIsMobileMenuOpen(false);
-                                    setActiveHash(item.url);
                                 }}
                                 className="block text-lg font-bold text-white/70 hover:text-white"
                             >

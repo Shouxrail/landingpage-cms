@@ -2,6 +2,7 @@ export const BackgroundVideoSchema = {
   url: { type: "video", label: "Background Video URL", default: "https://www.w3schools.com/html/mov_bbb.mp4" },
   id: { type: "text", label: "Section ID", default: "" },
   bgColor: { type: "color", label: "Background Color", default: "#000000" },
+  horizontalPadding: { type: "range", label: "Horizontal Padding", min: 0, max: 1000, step: 1, unit: "(px)", default: 0 },
   overlayOpacity: {
     type: "select",
     label: "Darkness Overlay Filter",

@@ -120,7 +120,7 @@ export default function Editor({
       {/* 2. MAIN COMPOSITION AREA */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* PREVIEW CONTAINER */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden relative bg-white pattern-dots custom-scrollbar">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden relative bg-slate-50 pattern-dots custom-scrollbar w-full h-screen">
           <div className="bg-gray-300 flex flex-col items-center">
             <div style={{
               transform: 'scale(0.7)',
@@ -130,7 +130,7 @@ export default function Editor({
             }}>
               <div className="overflow-hidden bg-black">
                 {blocks.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center p-12 text-center bg-slate-50">
+                  <div className="flex flex-col w-full h-screen items-center justify-center p-12 text-center bg-slate-50">
                     <span className="text-6xl mb-6">✨</span>
                     <h3 className="text-xl font-black text-slate-800">Your canvas is empty</h3>
                     <p className="text-slate-500 mt-2">Add your first block from the sidebar</p>

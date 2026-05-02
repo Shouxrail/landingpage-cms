@@ -8,7 +8,7 @@ interface SnapScrollContainerProps {
   blocks: any[];
   siteName: any;
   isTitleReveal: boolean;
-  backgroundColor: string;
+  backgroundColor: any;
 }
 
 export default function SnapScrollContainer({

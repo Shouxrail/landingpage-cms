@@ -1,6 +1,5 @@
-import dynamic from "next/dynamic";
-
-const BlockRenderer = dynamic(() => import("@/components/BlockRenderer"));
+import { lazy, Suspense } from "react";
+const BlockRenderer = lazy(() => import("@/components/BlockRenderer"));
 
 export const Hero = ({ data }: {
   data: {
@@ -41,7 +40,9 @@ export const Hero = ({ data }: {
 
       <div className="relative z-10 max-w-7xl mx-auto w-full">
         <div className={`w-full flex flex-col ${alignment}`}>
-          <BlockRenderer blocks={childBlocks} />
+          <Suspense fallback={null}>
+            <BlockRenderer blocks={childBlocks} />
+          </Suspense>
         </div>
       </div>
     </section>

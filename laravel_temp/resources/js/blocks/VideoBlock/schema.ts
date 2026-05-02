@@ -1,6 +1,9 @@
 export const VideoSchema = {
   url: { type: "video", label: "Video URL", default: "https://www.w3schools.com/html/mov_bbb.mp4" },
   poster: { type: "image", label: "Poster Image (Optional)", default: "" },
+  hideControls: { type: "boolean", label: "Hide Player Controls", default: false },
+  autoPlay: { type: "boolean", label: "Autoplay (Muted)", default: false },
+  loop: { type: "boolean", label: "Loop Video", default: false },
   fit: { 
     type: "select", 
     label: "Video Fit & Aspect", 

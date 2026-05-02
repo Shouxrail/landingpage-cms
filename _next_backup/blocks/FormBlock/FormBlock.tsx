@@ -72,7 +72,7 @@ export default function FormBlock({ data }: { data: FormBlockProps }) {
                     </svg>
                 </div>
                 <h3 className="text-3xl font-bold text-white mb-2">{successMessage}</h3>
-                <button 
+                <button
                     onClick={() => setSubmitted(false)}
                     className="mt-6 text-primary hover:underline font-bold"
                 >
@@ -84,7 +84,7 @@ export default function FormBlock({ data }: { data: FormBlockProps }) {
 
     return (
         <div className="w-full max-w-2xl mx-auto px-4 md:px-0">
-            <div 
+            <div
                 className="card glass border border-white/10 shadow-2xl p-8 md:p-14 rounded-[40px] overflow-hidden relative group"
                 style={{ backgroundColor: bgColor }}
             >
@@ -109,7 +109,7 @@ export default function FormBlock({ data }: { data: FormBlockProps }) {
                                             {field.label} {field.required && <span className="text-primary">*</span>}
                                         </span>
                                     </label>
-                                    
+
                                     {field.type === "textarea" ? (
                                         <textarea
                                             required={field.required}

@@ -122,33 +122,14 @@ export default function Editor({
         onUpdateSeoDescription={setSeoDescription}
         ogImage={ogImage}
         onUpdateOgImage={() => setShowMediaPicker(true)}
+        setDeviceMode={setDeviceMode}
+        setSelectedIndex={setSelectedIndex}
       />
 
       {/* 2. MAIN COMPOSITION AREA */}
       <div className="flex-1 flex flex-col min-w-0">
-        
-        {/* TOP VIEWPORT TOGGLE BAR */}
-        <div className="h-14 border-b border-white/10 bg-black/40 backdrop-blur-md flex items-center justify-center gap-2 z-10">
-          <div className="bg-white/5 p-1 rounded-xl flex gap-1 border border-white/10">
-            <button 
-              onClick={() => { setDeviceMode('desktop'); setSelectedIndex(null); }}
-              className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${deviceMode === 'desktop' ? 'bg-primary text-white shadow-lg' : 'text-white/40 hover:text-white/80 hover:bg-white/5'}`}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-              Desktop
-            </button>
-            <button 
-              onClick={() => { setDeviceMode('mobile'); setSelectedIndex(null); }}
-              className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${deviceMode === 'mobile' ? 'bg-primary text-white shadow-lg' : 'text-white/40 hover:text-white/80 hover:bg-white/5'}`}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-              Mobile
-            </button>
-          </div>
-        </div>
-
         {/* PREVIEW CONTAINER */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden relative bg-[#0a0a0a] pattern-dots custom-scrollbar flex flex-col items-center py-10">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden relative bg-white pattern-dots custom-scrollbar flex flex-col items-center no-scrollbar">
           {deviceMode === 'mobile' && mobileBlocks === null ? (
             <div className="flex flex-col items-center justify-center m-auto p-12 bg-white/5 border border-white/10 rounded-3xl max-w-md text-center">
               <div className="w-20 h-20 bg-primary/20 text-primary rounded-full flex items-center justify-center mb-6 border border-primary/30">
@@ -156,7 +137,7 @@ export default function Editor({
               </div>
               <h3 className="text-2xl font-black text-white mb-2">Create Mobile Version</h3>
               <p className="text-white/50 text-sm mb-8">Design a custom mobile experience. You can start fresh or copy your existing desktop blocks as a baseline.</p>
-              
+
               <div className="flex flex-col gap-3 w-full">
                 <button onClick={() => setMobileBlocks([...blocks])} className="btn btn-primary w-full font-bold shadow-lg shadow-primary/20">
                   Copy Desktop Blocks
@@ -167,21 +148,22 @@ export default function Editor({
               </div>
             </div>
           ) : (
-            <div 
-              className={`bg-white transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-2xl ${
-                deviceMode === 'mobile' 
-                  ? 'w-[375px] min-h-[812px] rounded-[3rem] border-[8px] border-[#1a1a1a] shadow-[0_0_0_2px_rgba(255,255,255,0.1),0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden' 
-                  : 'w-full min-h-full'
-              }`}
-            >
-              <div style={{
-                transform: deviceMode === 'desktop' ? 'scale(0.8)' : 'scale(1)',
+            <div
+              style={{
+                transform: deviceMode === 'desktop' ? 'scale(0.7)' : 'scale(1)',
                 transformOrigin: 'top center',
-                marginBottom: deviceMode === 'desktop' ? '-20%' : '0'
-              }}>
+                marginBottom: deviceMode === 'desktop' ? '-20%' : '0',
+                // width: deviceMode === 'desktop' ? '100%' : undefined
+              }}
+              className={`flex-1 h-screen w-screen transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${deviceMode === 'mobile'
+                ? 'w-[375px] min-h-[812px] rounded-[3rem] border-[8px] border-[#1a1a1a] shadow-[0_0_0_2px_rgba(255,255,255,0.1),0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden'
+                : ''
+                }`}
+            >
+              <div className="w-full">
                 <div className="overflow-hidden bg-white">
                   {activeBlocks.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center p-12 text-center bg-slate-50 min-h-[500px]">
+                    <div className="flex flex-col items-center justify-center p-12 text-center min-h-[500px]">
                       <span className="text-6xl mb-6">✨</span>
                       <h3 className="text-xl font-black text-slate-800">Your canvas is empty</h3>
                       <p className="text-slate-500 mt-2">Add your first block from the sidebar</p>
@@ -196,10 +178,10 @@ export default function Editor({
         </main>
 
         {/* 3. BOTTOM EDITOR BAR (PROPERTIES) */}
-        <div className={`transition-all duration-500 ease-in-out bg-black border-t border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] z-40 h-[30%]`}>
+        <div className={`transition-all duration-500 ease-in-out bg-black border-t border-white/10 z-40 max-h-[30%] p-6`}>
           {selectedIndex !== null ? activeBlocks[selectedIndex] && (
-            <div className="h-full flex flex-col">
-              <div className="flex-1 overflow-y-auto p-10 custom-scrollbar">
+            <div className={`h-full flex flex-col`}>
+              <div className="flex-1 overflow-y-auto custom-scrollbar">
                 <div className="max-w-5xl mx-auto">
                   <PropertyEditor
                     schema={BLOCK_REGISTRY[activeBlocks[selectedIndex].type]?.Schema}
