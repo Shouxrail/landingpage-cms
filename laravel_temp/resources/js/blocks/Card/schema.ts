@@ -35,7 +35,7 @@ export const CardSchema = {
     ],
     default: "items-center text-center"
   },
-  suptitle: { type: "text", label: "Section Sup Title", default: "Our Features" },
+  suptitle: { type: "textarea", label: "Section Sup Title", default: "Our Features" },
   suptitleColor: { type: "color", label: "Sup Title Color", default: "" },
   suptitleSize: {
     type: "select",
@@ -48,7 +48,7 @@ export const CardSchema = {
     ],
     default: "text-xl"
   },
-  title: { type: "text", label: "Section Title", default: "Our Features" },
+  title: { type: "textarea", label: "Section Title", default: "Our Features" },
   titleSize: {
     type: "select",
     label: "Title Font Size",

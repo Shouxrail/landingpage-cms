@@ -62,7 +62,7 @@ export const Card = ({ data }: {
             )}
             {data.suptitle && (
               <span
-                className={`${data.suptitleSize} ${data.icon ? "" : "tracking-[0.3em]"} font-medium transition-all`}
+                className={`${data.suptitleSize} ${data.icon ? "" : "tracking-[0.3em]"} font-medium transition-all whitespace-pre-line`}
                 style={{ color: data.suptitleColor || 'var(--p)' }}
               >
                 {data.suptitle}
@@ -72,7 +72,7 @@ export const Card = ({ data }: {
 
           {data.title && (
             <h2
-              className={`${data.titleSize || "text-5xl"} font-bold tracking-tight leading-[1.1] transition-all duration-500`}
+              className={`${data.titleSize || "text-5xl"} font-bold tracking-tight leading-[1.1] transition-all duration-500 whitespace-pre-line`}
               style={{ color: data.titleColor || '#ffffff' }}
             >
               {data.title}
