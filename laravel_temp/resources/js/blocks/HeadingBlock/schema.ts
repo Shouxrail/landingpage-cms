@@ -1,5 +1,5 @@
 export const HeadingSchema = {
-  text: { type: "text", label: "Heading Text", default: "Heading" },
+  text: { type: "textarea", label: "Heading Text", default: "Heading" },
   level: {
     type: "select",
     label: "Level",

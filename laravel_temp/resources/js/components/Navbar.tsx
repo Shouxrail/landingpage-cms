@@ -89,7 +89,7 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
 
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 px-8 py-6 bg-[rgba(0,0,0,0.35)] backdrop-blur-[4px]`}
+            className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 px-8 py-5 bg-[rgba(0,0,0,0.35)] backdrop-blur-[0.25rem]`}
         >
             <div className="w-full mx-auto flex items-center justify-between">
                 {/* Logo Section */}
@@ -103,7 +103,7 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
                     }}
                 >
                     {logoUrl ? (
-                        <img src={logoUrl} alt={siteName} className="w-[265px] object-contain transition-transform group-hover:scale-110" />
+                        <img src={logoUrl} alt={siteName} className="w-[12.5rem] object-contain transition-transform group-hover:scale-110" />
                     ) : (
                         <span className="text-xl font-black text-white tracking-tighter">
                             {siteName?.split(' ')[0]}<span className="text-primary">.</span>
@@ -125,7 +125,7 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
                         const isActive = hasHash
                             ? activeHash === hashPart
                             : window.location.pathname === (item.url || '/');
-                        const linkClass = `${isActive ? 'slashicon-active' : 'slashicon-hover'} text-[16px] font-bold tracking-[15%] text-white hover:text-white/70 transition-colors`;
+                        const linkClass = `${isActive ? 'slashicon-active' : 'slashicon-hover'} text-base font-bold tracking-[15%] text-white hover:text-white/70 transition-colors`;
 
                         if (hasHash) {
                             return (

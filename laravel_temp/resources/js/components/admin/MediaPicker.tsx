@@ -7,6 +7,7 @@ interface Media {
     id: number;
     file_name: string;
     storage_path: string;
+    url: string;
     mime_type: string;
     size: number;
 }
@@ -57,8 +58,8 @@ export default function MediaPicker({ onSelect, onClose, title = "Select Media" 
             const res = await axios.post("/admin/media", formData);
             if (res.data) {
                 fetchMedia();
-                if (res.data.storage_path) {
-                    onSelect(res.data.storage_path);
+                if (res.data.url) {
+                    onSelect(res.data.url);
                 }
             }
         } catch (err: any) {
@@ -110,18 +111,18 @@ export default function MediaPicker({ onSelect, onClose, title = "Select Media" 
                                 <div
                                     key={item.id}
                                     className="group relative aspect-square bg-white/5 border border-white/5 overflow-hidden cursor-pointer hover:border-primary/50 transition-all duration-300 active:scale-95 shadow-lg"
-                                    onClick={() => onSelect(item.storage_path)}
+                                    onClick={() => onSelect(item.url)}
                                 >
                                     {item.mime_type?.startsWith('video/') || item.file_name?.match(/\.(mp4|webm|ogg|mov)$/i) ? (
                                         <video
-                                            src={item.storage_path}
+                                            src={item.url}
                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 pointer-events-none"
                                             muted
                                             playsInline
                                         />
                                     ) : (
                                         <img
-                                            src={item.storage_path}
+                                            src={item.url}
                                             alt={item.file_name}
                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                         />

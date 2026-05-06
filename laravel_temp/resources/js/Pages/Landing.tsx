@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar';
 import SnapScrollContainer from '@/components/SnapScrollContainer';
 import HashScrollHandler from '@/components/HashScrollHandler';
 import { Head } from '@inertiajs/react';
+import { useResponsiveScale } from '@/hooks/useResponsiveScale';
 
 interface LandingProps {
     page: {
@@ -36,9 +37,10 @@ export default function Landing({ page, settings }: LandingProps) {
     const blocks = content.blocks || [];
     const mobileBlocks = mobileContent?.blocks || [];
     const hasMobileBlocks = mobileBlocks.length > 0;
-    
     const pageSettings = content.settings || {};
     const isSnapScroll = pageSettings.isSnapScroll || false;
+
+    const { isDesktop, scale } = useResponsiveScale(1536, 768);
 
     const navbar = (
         <Navbar
@@ -71,33 +73,23 @@ export default function Landing({ page, settings }: LandingProps) {
                 {headContent}
                 <HashScrollHandler />
                 {navbar}
-                {hasMobileBlocks ? (
-                    <>
-                        <div className="hidden md:block h-full">
-                            <SnapScrollContainer
-                                blocks={blocks}
-                                siteName={settings?.site_name}
-                                isTitleReveal={pageSettings.isTitleReveal || false}
-                                backgroundColor={pageSettings.backgroundColor}
-                            />
-                        </div>
-                        <div className="block md:hidden h-full">
-                            <SnapScrollContainer
-                                blocks={mobileBlocks}
-                                siteName={settings?.site_name}
-                                isTitleReveal={pageSettings.isTitleReveal || false}
-                                backgroundColor={pageSettings.backgroundColor}
-                            />
-                        </div>
-                    </>
-                ) : (
-                    <SnapScrollContainer
-                        blocks={blocks}
-                        siteName={settings?.site_name}
-                        isTitleReveal={pageSettings.isTitleReveal || false}
-                        backgroundColor={pageSettings.backgroundColor}
-                    />
-                )}
+                <div className="h-full">
+                    {isDesktop ? (
+                        <SnapScrollContainer
+                            blocks={blocks}
+                            siteName={settings?.site_name}
+                            isTitleReveal={pageSettings.isTitleReveal || false}
+                            backgroundColor={pageSettings.backgroundColor}
+                        />
+                    ) : (
+                        <SnapScrollContainer
+                            blocks={hasMobileBlocks ? mobileBlocks : blocks}
+                            siteName={settings?.site_name}
+                            isTitleReveal={pageSettings.isTitleReveal || false}
+                            backgroundColor={pageSettings.backgroundColor}
+                        />
+                    )}
+                </div>
             </>
         );
     }
@@ -107,18 +99,16 @@ export default function Landing({ page, settings }: LandingProps) {
             {headContent}
             <HashScrollHandler />
             {navbar}
-            <main style={{ backgroundColor: pageSettings.backgroundColor || 'transparent', overflowX: 'hidden' }}>
-                {hasMobileBlocks ? (
-                    <>
-                        <div className="hidden md:block">
-                            <BlockRenderer blocks={blocks} />
-                        </div>
-                        <div className="block md:hidden">
-                            <BlockRenderer blocks={mobileBlocks} />
-                        </div>
-                    </>
-                ) : (
+            <main
+                style={{
+                    backgroundColor: pageSettings.backgroundColor || 'transparent',
+                    overflowX: 'hidden',
+                }}
+            >
+                {isDesktop ? (
                     <BlockRenderer blocks={blocks} />
+                ) : (
+                    <BlockRenderer blocks={hasMobileBlocks ? mobileBlocks : blocks} />
                 )}
             </main>
         </>

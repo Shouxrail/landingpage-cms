@@ -26,7 +26,7 @@ export default function Pages({ pages }: PagesProps) {
         e.preventDefault();
         setIsCreating(true);
         setError("");
-        
+
         router.post('/admin/pages', {
             title: newTitle,
             slug: newSlug,
@@ -67,25 +67,32 @@ export default function Pages({ pages }: PagesProps) {
                                 Settings
                             </Link>
                             <Link
+                                href="/admin/media"
+                                className="btn btn-ghost border-white/10 text-white/60 hover:text-white transition-all font-bold px-6"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                Media
+                            </Link>
+                            <Link
                                 href="/admin/submissions"
                                 className="btn btn-ghost border-white/10 text-white/60 hover:text-white transition-all font-bold px-6"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                                 Submissions
                             </Link>
-                            <button
+                            {/* <button
                                 onClick={() => setShowModal(true)}
                                 className="btn btn-primary shadow-lg shadow-primary/20 h-10 px-4 font-bold"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" d="M12 4v16m8-8H4" /></svg>
                                 Create Page
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </header>
 
                 {/* Stats Overview */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="stats glass border border-white/10 text-white">
                         <div className="stat">
                             <div className="stat-title text-white/50 text-xs font-bold uppercase tracking-widest">Total Pages</div>
@@ -107,7 +114,7 @@ export default function Pages({ pages }: PagesProps) {
                             <div className="stat-desc text-white/30 text-xs mt-1">Optimized Edge cached</div>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 <section className="space-y-6">
                     <div className="flex items-center justify-between">
@@ -139,10 +146,10 @@ export default function Pages({ pages }: PagesProps) {
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                                         </div>
                                     </Link>
-                                    
-                                    <Link 
-                                        href={`/admin/pages/${page.slug}`} 
-                                        method="delete" 
+
+                                    {/* <Link
+                                        href={`/admin/pages/${page.slug}`}
+                                        method="delete"
                                         as="button"
                                         className="card-actions justify-end mt-2"
                                         onBefore={() => confirm('Are you sure you want to delete this page?')}
@@ -150,7 +157,7 @@ export default function Pages({ pages }: PagesProps) {
                                         <div className="btn btn-sm btn-ghost text-red-400/60 hover:text-red-400 transition-all flex items-center gap-2 font-bold px-0">
                                             Delete Page
                                         </div>
-                                    </Link>
+                                    </Link> */}
                                 </div>
                             </div>
                         ))}

@@ -19,12 +19,26 @@
   --color-foreground: var(--foreground);
   --font-sans: 'Inter', var(--font-geist-sans), ui-sans-serif, system-ui;
   --font-mono: var(--font-geist-mono);
+  
+  /* Disable default width-based md breakpoint */
+  --breakpoint-md: initial;
 }
 
+/* Custom md variant driven by .is-desktop class */
+@variant md (&:where(.is-desktop *));
+
 @keyframes mesh-gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .animate-mesh {
@@ -39,14 +53,15 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
 }
 
 /* This adds a slight darkening effect to the slide being covered */
-section.sticky + section.sticky {
+section.sticky+section.sticky {
   z-index: 10;
 }
 
@@ -59,21 +74,24 @@ section.sticky:not(:last-child) {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .slashicon-active::before {
   content: '/';
   color: #05FD2A;
-  font-size: 24px;
+  /* font-size: 24px; */
   transition: color 0.3s ease-in-out;
 }
 
 .slashicon-hover:hover::before {
   content: '/';
   color: white;
-  font-size: 24px;
+  /* font-size: 24px; */
   transition: color 0.3s ease-in-out;
 }

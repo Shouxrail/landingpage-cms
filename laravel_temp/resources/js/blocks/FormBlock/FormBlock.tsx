@@ -32,7 +32,7 @@ interface FormBlockProps {
     bgColor?: string;
 }
 
-const inputClass = "input input-bordered bg-white border-black/10 text-black focus:border-primary focus:ring-1 focus:ring-primary h-14 rounded-[8px] transition-all placeholder:text-black/50 w-full";
+const inputClass = "input input-bordered bg-white border-black/10 text-black focus:border-primary focus:ring-1 focus:ring-primary h-14 rounded-[5px] transition-all placeholder:text-black/50 w-full";
 
 function SingleInput({ field, fieldKey, formData, setFormData }: {
     field: SubField | FormField;
@@ -45,7 +45,7 @@ function SingleInput({ field, fieldKey, formData, setFormData }: {
             <textarea
                 required={field.required}
                 placeholder={field.placeholder}
-                className="textarea textarea-bordered bg-white border-black/10 text-black focus:border-primary focus:ring-1 focus:ring-primary h-32 rounded-[8px] transition-all placeholder:text-black/50 w-full"
+                className="textarea textarea-bordered bg-white border-black/10 text-black focus:border-primary focus:ring-1 focus:ring-primary h-32 rounded-[5px] transition-all placeholder:text-black/50 w-full"
                 onChange={(e) => setFormData({ ...formData, [fieldKey]: e.target.value })}
             />
         );
@@ -55,7 +55,7 @@ function SingleInput({ field, fieldKey, formData, setFormData }: {
             <div className="relative">
                 <select
                     required={field.required}
-                    className="select select-bordered w-full border-white/10 text-white focus:border-primary focus:ring-1 focus:ring-primary rounded-[8px] transition-all appearance-none"
+                    className="select select-bordered w-full border-white/10 text-white focus:border-primary focus:ring-1 focus:ring-primary rounded-[5px] transition-all appearance-none"
                     onChange={(e) => setFormData({ ...formData, [fieldKey]: e.target.value })}
                     defaultValue=""
                 >
@@ -75,7 +75,7 @@ function SingleInput({ field, fieldKey, formData, setFormData }: {
             type={field.type}
             required={field.required}
             placeholder={field.placeholder}
-            className={inputClass + (!['textarea', 'multiple'].find(v => v === field.type) ? ' h-[41px]' : '')}
+            className={inputClass + (!['textarea', 'multiple'].find(v => v === field.type) ? ' h-[2.56rem]' : '')}
             onChange={(e) => setFormData({ ...formData, [fieldKey]: e.target.value })}
         />
     );
@@ -188,7 +188,7 @@ export default function FormBlock({ data }: { data: FormBlockProps }) {
                                                 {field.fields.map((sub, sIdx) => (
                                                     <div key={sIdx} className="form-control w-full group/field">
                                                         <label className="pb-0.5">
-                                                            <span className="text-white text-[9px]">
+                                                            <span className="text-white text-[0.56rem]">
                                                                 {sub.label}:
                                                             </span>
                                                         </label>
@@ -249,7 +249,7 @@ export default function FormBlock({ data }: { data: FormBlockProps }) {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting || !isHuman}
-                                    className="btn btn-primary text-[400] px-[50px] rounded-4xl hover:scale-[1.02] active:scale-95 transition-all text-[16px] tracking-[20%] group"
+                                    className="btn btn-primary text-[400] px-[2.5rem] rounded-4xl hover:scale-[1.02] active:scale-95 transition-all text-base tracking-[20%] group disabled:bg-primary disabled:border-primary disabled:text-white/50 disabled:hover:scale-100 disabled:active:scale-100"
                                 >
                                     {isSubmitting ? (
                                         <span className="loading loading-spinner"></span>

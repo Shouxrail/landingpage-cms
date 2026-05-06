@@ -12,7 +12,7 @@ export const Hero = ({ data }: {
   }
 }) => {
   const alignment = data.align || "items-center text-center";
-  const paddingY = data.paddingY !== undefined ? `${data.paddingY}px` : "100px";
+  const paddingY = data.paddingY !== undefined ? `${data.paddingY / 16}rem` : "6.25rem";
   const overlay = data.overlayOpacity || "bg-transparent";
   const childBlocks = data.children || [];
 
@@ -38,7 +38,7 @@ export const Hero = ({ data }: {
       {/* Background Image Overlay */}
       {data.bgImage && <div className={`absolute inset-0 z-0 ${overlay}`}></div>}
 
-      <div className="relative z-10 max-w-7xl mx-auto w-full">
+      <div className="relative z-10 max-w-[80rem] mx-auto w-full">
         <div className={`w-full flex flex-col ${alignment}`}>
           <Suspense fallback={null}>
             <BlockRenderer blocks={childBlocks} />

@@ -126,8 +126,11 @@ export default function Editor({
         setSelectedIndex={setSelectedIndex}
       />
 
+
+
       {/* 2. MAIN COMPOSITION AREA */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className={`flex-1 flex min-w-0 overflow-hidden ${deviceMode === 'desktop' ? 'flex-col' : 'flex-row'}`}>
+
         {/* PREVIEW CONTAINER */}
         <main className="flex-1 overflow-y-auto overflow-x-hidden relative bg-white pattern-dots custom-scrollbar flex flex-col items-center no-scrollbar">
           {deviceMode === 'mobile' && mobileBlocks === null ? (
@@ -150,10 +153,9 @@ export default function Editor({
           ) : (
             <div
               style={{
-                transform: deviceMode === 'desktop' ? 'scale(0.7)' : 'scale(1)',
+                transform: deviceMode === 'desktop' ? 'scale(0.7)' : 'scale(0.5)',
                 transformOrigin: 'top center',
                 marginBottom: deviceMode === 'desktop' ? '-20%' : '0',
-                // width: deviceMode === 'desktop' ? '100%' : undefined
               }}
               className={`flex-1 h-screen w-screen transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${deviceMode === 'mobile'
                 ? 'w-[375px] min-h-[812px] rounded-[3rem] border-[8px] border-[#1a1a1a] shadow-[0_0_0_2px_rgba(255,255,255,0.1),0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden'
@@ -177,27 +179,68 @@ export default function Editor({
           )}
         </main>
 
-        {/* 3. BOTTOM EDITOR BAR (PROPERTIES) */}
-        <div className={`transition-all duration-500 ease-in-out bg-black border-t border-white/10 z-40 max-h-[30%] p-6`}>
-          {selectedIndex !== null ? activeBlocks[selectedIndex] && (
-            <div className={`h-full flex flex-col`}>
-              <div className="flex-1 overflow-y-auto custom-scrollbar">
-                <div className="max-w-5xl mx-auto">
+        {/* DESKTOP: Bottom property bar */}
+        {deviceMode === "desktop" && (
+          <div className="transition-all duration-500 ease-in-out bg-black border-t border-white/10 z-40 max-h-[30%] p-6">
+            {selectedIndex !== null ? activeBlocks[selectedIndex] && (
+              <div className="h-full flex flex-col">
+                <div className="flex-1 overflow-y-auto custom-scrollbar">
+                  <div className="max-w-5xl mx-auto">
+                    <PropertyEditor
+                      schema={BLOCK_REGISTRY[activeBlocks[selectedIndex].type]?.Schema}
+                      data={activeBlocks[selectedIndex].data}
+                      onChange={(newData) => updateBlockData(selectedIndex, newData)}
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center p-12 text-center">
+                <span className="text-6xl mb-6">✨</span>
+                <h3 className="text-xl font-black text-slate-800">Select a block to edit</h3>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* MOBILE: Right-side property panel — full height, beside the phone */}
+        {deviceMode === "mobile" && mobileBlocks !== null && (
+          <div className="w-[380px] shrink-0 h-full flex flex-col bg-[#0a0a0a] border-l border-white/10 overflow-hidden transition-all duration-500">
+            {selectedIndex !== null && activeBlocks[selectedIndex] ? (
+              <>
+                {/* Panel header */}
+                <div className="flex items-center justify-between px-5 py-3 border-b border-white/10 shrink-0">
+                  <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">
+                    {activeBlocks[selectedIndex].type} Block
+                  </span>
+                  <button
+                    onClick={() => setSelectedIndex(null)}
+                    className="btn btn-ghost btn-xs text-white/30 hover:text-white"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                {/* Scrollable property fields */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-5">
                   <PropertyEditor
                     schema={BLOCK_REGISTRY[activeBlocks[selectedIndex].type]?.Schema}
                     data={activeBlocks[selectedIndex].data}
                     onChange={(newData) => updateBlockData(selectedIndex, newData)}
                   />
                 </div>
+              </>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center p-10 text-center">
+                <span className="text-5xl mb-4">📱</span>
+                <h3 className="text-base font-black text-white/60">Select a block to edit</h3>
+                <p className="text-xs text-white/30 mt-2">Click any block in the sidebar to customize it</p>
               </div>
-            </div>
-          ) : (
-            <div className="h-full flex flex-col items-center justify-center p-12 text-center">
-              <span className="text-6xl mb-6">✨</span>
-              <h3 className="text-xl font-black text-slate-800">Select a block to edit</h3>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
+
       </div>
 
       {alertMessage && (

@@ -85,7 +85,7 @@ export default function MediaLibraryPage({ media: initialMedia }: MediaProps) {
                             </div>
                         </div>
                         <label className={`btn btn-primary shadow-lg shadow-primary/20 h-12 px-8 font-bold ${isUploading ? 'loading' : ''}`}>
-                            <input type="file" className="hidden" onChange={handleUpload} disabled={isUploading} accept="image/*" />
+                            <input type="file" className="hidden" onChange={handleUpload} disabled={isUploading} accept="image/*,video/*" />
                             {isUploading ? "Processing..." : "Upload New Asset"}
                         </label>
                     </header>
@@ -106,12 +106,16 @@ export default function MediaLibraryPage({ media: initialMedia }: MediaProps) {
                                     <div
                                         key={item.id}
                                         className={`group relative aspect-square rounded-[2rem] overflow-hidden border transition-all duration-300 cursor-pointer shadow-xl ${selectedItem?.id === item.id
-                                                ? "bg-primary/10 border-primary shadow-primary/20"
-                                                : "bg-white/5 border-white/5 hover:border-white/20"
+                                            ? "bg-primary/10 border-primary shadow-primary/20"
+                                            : "bg-white/5 border-white/5 hover:border-white/20"
                                             }`}
                                         onClick={() => setSelectedItem(item)}
                                     >
-                                        <img src={item.url} alt={item.file_name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                        {item.mime_type?.startsWith('video/') || item.file_name?.match(/\.(mp4|webm|ogg|mov)$/i) ? (
+                                            <video src={item.url} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" muted playsInline />
+                                        ) : (
+                                            <img src={item.url} alt={item.file_name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                        )}
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-5">
                                             <p className="text-[10px] font-bold text-white truncate">{item.file_name}</p>
                                         </div>
@@ -137,7 +141,11 @@ export default function MediaLibraryPage({ media: initialMedia }: MediaProps) {
                                     <button onClick={() => setSelectedItem(null)} className="btn btn-ghost btn-circle btn-xs text-white/40">✕</button>
                                 </div>
                                 <div className="aspect-square rounded-[2.5rem] bg-white/5 border border-white/10 overflow-hidden shadow-2xl">
-                                    <img src={selectedItem.url} alt={selectedItem.file_name} className="w-full h-full object-contain p-4" />
+                                    {selectedItem.mime_type?.startsWith('video/') || selectedItem.file_name?.match(/\.(mp4|webm|ogg|mov)$/i) ? (
+                                        <video src={selectedItem.url} className="w-full h-full object-contain p-4" controls muted playsInline />
+                                    ) : (
+                                        <img src={selectedItem.url} alt={selectedItem.file_name} className="w-full h-full object-contain p-4" />
+                                    )}
                                 </div>
                             </div>
 

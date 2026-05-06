@@ -1,8 +1,19 @@
 export const BackgroundVideoSchema = {
   url: { type: "video", label: "Background Video URL", default: "https://www.w3schools.com/html/mov_bbb.mp4" },
+  poster: { type: "image", label: "Poster Image (Shows while loading)", default: "" },
   id: { type: "text", label: "Section ID", default: "" },
   bgColor: { type: "color", label: "Background Color", default: "#000000" },
   horizontalPadding: { type: "range", label: "Horizontal Padding", min: 0, max: 1000, step: 1, unit: "(px)", default: 0 },
+  height: {
+    type: "select",
+    label: "Section Height",
+    options: [
+      { label: "Full Screen (100vh)", value: "h-screen" },
+      { label: "Min Full Screen (min-h-screen)", value: "min-h-screen" },
+      { label: "Auto (Content Based)", value: "h-auto" },
+    ],
+    default: "h-screen"
+  },
   overlayOpacity: {
     type: "select",
     label: "Darkness Overlay Filter",
@@ -79,6 +90,7 @@ export const BackgroundVideoSchema = {
     unit: "%",
     default: 0
   },
+  fixedBackground: { type: "boolean", label: "Fixed Background (Still on Scroll)", default: false },
   children: {
     type: "blocks",
     label: "Foreground Content Elements",

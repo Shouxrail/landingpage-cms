@@ -5,7 +5,7 @@ export const LayoutBlockComponent = ({ data }: { data: { direction: string; chil
     const directionClass = data.direction || "grid-cols-1";
     const childBlocks = data.children || [];
     const bgColor = data.bgColor || "transparent";
-    const isFullScreen = data.isFullScreen || 'none';
+    const heightClass = data.height || "h-auto";
     const paddingX = data.paddingX || 0;
     const paddingY = data.paddingY || 0;
     const alignX = data.alignX || "justify-items-stretch";
@@ -13,13 +13,13 @@ export const LayoutBlockComponent = ({ data }: { data: { direction: string; chil
 
     return (
         <div
-            className={`grid w-full h-full gap-6 ${directionClass} ${alignX} ${alignY} ${isFullScreen === 'full' ? 'h-screen w-100' : ''}`}
+            className={`grid w-full gap-6 ${directionClass} ${alignX} ${alignY} ${heightClass}`}
             style={{
                 backgroundColor: bgColor,
-                paddingLeft: `${paddingX}px`,
-                paddingRight: `${paddingX}px`,
-                paddingTop: `${paddingY}px`,
-                paddingBottom: `${paddingY}px`,
+                paddingLeft: `${paddingX / 16}rem`,
+                paddingRight: `${paddingX / 16}rem`,
+                paddingTop: `${paddingY / 16}rem`,
+                paddingBottom: `${paddingY / 16}rem`,
             }}
         >
             <Suspense fallback={null}>

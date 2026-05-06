@@ -9,7 +9,7 @@ export const HeadingBlockComponent = ({ data }: { data: any }) => {
 
   return (
     <Tag
-      className={`${fontSize} ${align} ${fontWeight} leading-tight`}
+      className={`${fontSize} ${align} ${fontWeight} leading-tight whitespace-pre-line`}
       style={{
         color: color === "inherit" ? undefined : color,
         marginTop,

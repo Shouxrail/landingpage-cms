@@ -41,8 +41,11 @@ export default function SnapScrollContainer({
   return (
     <main
       ref={containerRef}
-      className="h-screen w-full overflow-y-scroll snap-y snap-mandatory no-scrollbar"
+      className={`h-screen w-full overflow-y-scroll snap-y snap-mandatory transform origin-top-center no-scrollbar`}
       style={{
+        // transform: `scale(${scaleX})`,
+        // height: height,
+        // width: width,
         backgroundColor: backgroundColor || "transparent",
         overflowX: "hidden",
         display: "grid",

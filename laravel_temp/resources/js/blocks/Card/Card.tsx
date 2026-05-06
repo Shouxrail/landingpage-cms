@@ -30,7 +30,7 @@ export const Card = ({ data }: {
   }
 }) => {
   const alignment = data.align || "items-center text-center";
-  const paddingY = data.paddingY !== undefined ? `${data.paddingY}px` : "100px";
+  const paddingY = data.paddingY !== undefined ? `${data.paddingY / 16}rem` : "6.25rem";
   const childBlocks = data.children || [];
 
   const bgStyle: any = {
@@ -46,17 +46,17 @@ export const Card = ({ data }: {
 
   return (
     <section
-      className={`relative px-6 flex flex-col ${alignment} w-full`} style={{ ...bgStyle, maxWidth }}>
-      <div className="relative z-10 w-full transition-all duration-500">
+      className={`relative flex flex-col ${alignment}`} style={{ ...bgStyle, maxWidth }}>
+      <div className="relative z-10 w-full transition-all duration-500 flex-1">
         <div className={`w-full flex flex-col ${containerAlignClass} space-y-6`}>
           <div className="flex items-baseline self-start gap-3" style={data.icon ? {
-            transform: `translateX(-${(data.iconSize || 48) + 12}px)`,
+            transform: `translateX(-${((data.iconSize || 48) + 12) / 16}rem)`,
           } : {}}>
             {data.icon && (
               <img
                 src={data.icon}
                 alt=""
-                style={{ width: data.iconSize || 48, height: 'auto' }}
+                style={{ width: `${(data.iconSize || 48) / 16}rem`, height: 'auto' }}
                 className="object-contain"
               />
             )}

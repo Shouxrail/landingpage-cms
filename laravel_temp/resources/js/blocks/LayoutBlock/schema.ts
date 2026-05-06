@@ -24,12 +24,15 @@ export const LayoutBlockSchema = {
     ],
     default: "items-start"
   },
-  isFullScreen: {
-    type: "select", label: "Full Screen Section", default: "none",
+  height: {
+    type: "select",
+    label: "Block Height",
     options: [
-      { label: "None", value: "none" },
-      { label: "Full Screen", value: "full" },
-    ]
+      { label: "Auto (Content Based)", value: "h-auto" },
+      { label: "Full Screen (100vh)", value: "h-screen" },
+      { label: "Min Full Screen (min-h-screen)", value: "min-h-screen" },
+    ],
+    default: "h-auto"
   },
   direction: {
     type: "select",
