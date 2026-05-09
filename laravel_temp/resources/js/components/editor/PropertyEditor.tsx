@@ -13,6 +13,45 @@ export default function PropertyEditor({ schema, data, onChange }: PropertyEdito
   const [showMediaPicker, setShowMediaPicker] = useState<string | null>(null);
   const [expandedBlockIdx, setExpandedBlockIdx] = useState<number | null>(null);
   const [expandedObjectIdx, setExpandedObjectIdx] = useState<number | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [draggedField, setDraggedField] = useState<string | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, field: string, index: number) => {
+    setDraggedIndex(index);
+    setDraggedField(field);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent, field: string, index: number) => {
+    if (draggedField !== field) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverIndex(index);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    setDraggedField(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, field: string, index: number) => {
+    e.preventDefault();
+    if (draggedField !== field || draggedIndex === null || draggedIndex === index) {
+      handleDragEnd();
+      return;
+    }
+
+    const value = data[field];
+    if (Array.isArray(value)) {
+      const newArr = [...value];
+      const [movedItem] = newArr.splice(draggedIndex, 1);
+      newArr.splice(index, 0, movedItem);
+      onChange({ ...data, [field]: newArr });
+    }
+    handleDragEnd();
+  };
 
   const toggleBlock = (idx: number) => {
     setExpandedBlockIdx(prev => (prev === idx ? null : idx));
@@ -70,6 +109,15 @@ export default function PropertyEditor({ schema, data, onChange }: PropertyEdito
                 >
                   {value ? "Change Asset" : "Select Asset"}
                 </button>
+                {value && (
+                  <button
+                    onClick={() => onChange({ ...data, [key]: "" })}
+                    className="btn btn-ghost btn-sm text-error/60 hover:text-error hover:bg-error/10 h-12 px-3"
+                    title="Remove Asset"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                )}
               </div>
               {showMediaPicker === key && (
                 <MediaPicker
@@ -99,6 +147,15 @@ export default function PropertyEditor({ schema, data, onChange }: PropertyEdito
                 >
                   {value ? "Change Video" : "Select Video"}
                 </button>
+                {value && (
+                  <button
+                    onClick={() => onChange({ ...data, [key]: "" })}
+                    className="btn btn-ghost btn-sm text-error/60 hover:text-error hover:bg-error/10 h-12 px-3"
+                    title="Remove Video"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                )}
               </div>
               {showMediaPicker === key && (
                 <MediaPicker
@@ -119,7 +176,25 @@ export default function PropertyEditor({ schema, data, onChange }: PropertyEdito
             <div key={key} className="form-control w-full space-y-2">
               <label className="label py-1"><span className="label-text-alt text-white/40 font-bold uppercase tracking-widest text-[9px]">{config.label}</span></label>
               {Array.isArray(value) && value.map((item: string, i: number) => (
-                <div key={i} className="flex gap-2">
+                <div
+                  key={i}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, key, i)}
+                  onDragOver={(e) => handleDragOver(e, key, i)}
+                  onDragEnd={handleDragEnd}
+                  onDrop={(e) => handleDrop(e, key, i)}
+                  className={`flex gap-2 items-center transition-all duration-200
+                    ${dragOverIndex === i && draggedField === key && draggedIndex !== i ? 'scale-[1.02] translate-y-1' : ''}
+                    ${draggedIndex === i && draggedField === key ? 'opacity-30' : ''}
+                  `}
+                >
+                  <div className="text-white/20 hover:text-white/50 cursor-grab active:cursor-grabbing shrink-0" title="Drag to reorder">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
+                      <circle cx="9" cy="5" r="1.5" /><circle cx="15" cy="5" r="1.5" />
+                      <circle cx="9" cy="12" r="1.5" /><circle cx="15" cy="12" r="1.5" />
+                      <circle cx="9" cy="19" r="1.5" /><circle cx="15" cy="19" r="1.5" />
+                    </svg>
+                  </div>
                   <input
                     type="text"
                     className="input input-sm bg-white/5 border-white/10 text-white font-medium h-10 flex-1"
@@ -163,15 +238,35 @@ export default function PropertyEditor({ schema, data, onChange }: PropertyEdito
                 const isExpanded = expandedObjectIdx === i;
 
                 return (
-                  <div key={i} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden relative transition-all duration-300">
+                  <div
+                    key={i}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, key, i)}
+                    onDragOver={(e) => handleDragOver(e, key, i)}
+                    onDragEnd={handleDragEnd}
+                    onDrop={(e) => handleDrop(e, key, i)}
+                    className={`bg-white/5 border border-white/10 rounded-2xl overflow-hidden relative transition-all duration-300
+                      ${dragOverIndex === i && draggedField === key && draggedIndex !== i ? 'border-primary/50 bg-primary/5 scale-[1.01]' : ''}
+                      ${draggedIndex === i && draggedField === key ? 'opacity-30' : ''}
+                    `}
+                  >
                     <div
-                      onClick={() => toggleObject(i)}
                       className="p-4 bg-white/5 flex items-center justify-between cursor-pointer hover:bg-white/10 transition-colors"
+                      onClick={() => toggleObject(i)}
                     >
-                      <h4 className="text-[10px] font-black text-white px-2 py-0.5 rounded-full bg-white/5 uppercase tracking-widest flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" className={`h-3 w-3 text-primary transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg>
-                        {itemData.title || `Item ${i + 1}`}
-                      </h4>
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        <div className="text-white/20 hover:text-white/50 cursor-grab active:cursor-grabbing shrink-0" title="Drag to reorder" onClick={(e) => e.stopPropagation()}>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
+                            <circle cx="9" cy="5" r="1.5" /><circle cx="15" cy="5" r="1.5" />
+                            <circle cx="9" cy="12" r="1.5" /><circle cx="15" cy="12" r="1.5" />
+                            <circle cx="9" cy="19" r="1.5" /><circle cx="15" cy="19" r="1.5" />
+                          </svg>
+                        </div>
+                        <h4 className="text-[10px] font-black text-white px-2 py-0.5 rounded-full bg-white/5 uppercase tracking-widest flex items-center gap-2 truncate">
+                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-3 w-3 text-primary transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg>
+                          {itemData.title || `Item ${i + 1}`}
+                        </h4>
+                      </div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -273,15 +368,35 @@ export default function PropertyEditor({ schema, data, onChange }: PropertyEdito
                 const isExpanded = expandedBlockIdx === i;
 
                 return (
-                  <div key={i} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden relative transition-all duration-300">
+                  <div
+                    key={i}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, key, i)}
+                    onDragOver={(e) => handleDragOver(e, key, i)}
+                    onDragEnd={handleDragEnd}
+                    onDrop={(e) => handleDrop(e, key, i)}
+                    className={`bg-white/5 border border-white/10 rounded-2xl overflow-hidden relative transition-all duration-300
+                      ${dragOverIndex === i && draggedField === key && draggedIndex !== i ? 'border-primary/50 bg-primary/5 scale-[1.01]' : ''}
+                      ${draggedIndex === i && draggedField === key ? 'opacity-30' : ''}
+                    `}
+                  >
                     <div
-                      onClick={() => toggleBlock(i)}
                       className="p-4 bg-white/5 flex items-center justify-between cursor-pointer hover:bg-white/10 transition-colors"
+                      onClick={() => toggleBlock(i)}
                     >
-                      <h4 className="text-[10px] font-black text-white px-2 py-0.5 rounded-full bg-white/5 uppercase tracking-widest flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" className={`h-3 w-3 text-primary transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg>
-                        {block.type} Block
-                      </h4>
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        <div className="text-white/20 hover:text-white/50 cursor-grab active:cursor-grabbing shrink-0" title="Drag to reorder" onClick={(e) => e.stopPropagation()}>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
+                            <circle cx="9" cy="5" r="1.5" /><circle cx="15" cy="5" r="1.5" />
+                            <circle cx="9" cy="12" r="1.5" /><circle cx="15" cy="12" r="1.5" />
+                            <circle cx="9" cy="19" r="1.5" /><circle cx="15" cy="19" r="1.5" />
+                          </svg>
+                        </div>
+                        <h4 className="text-[10px] font-black text-white px-2 py-0.5 rounded-full bg-white/5 uppercase tracking-widest flex items-center gap-2 truncate">
+                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-3 w-3 text-primary transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg>
+                          {block.type} Block
+                        </h4>
+                      </div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();

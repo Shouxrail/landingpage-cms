@@ -4,14 +4,47 @@ export const VideoSchema = {
   hideControls: { type: "boolean", label: "Hide Player Controls", default: false },
   autoPlay: { type: "boolean", label: "Autoplay (Muted)", default: false },
   loop: { type: "boolean", label: "Loop Video", default: false },
-  fit: { 
-    type: "select", 
-    label: "Video Fit & Aspect", 
+  fit: {
+    type: "select",
+    label: "Video Fit & Aspect",
     options: [
       { label: "Standard (16:9 Aspect Ratio)", value: "aspect-video object-cover" },
       { label: "Fill Container", value: "w-full h-full object-cover rounded-2xl" },
+      { label: "Natural Height (Scale automatically)", value: "h-auto" },
       { label: "Vertical/Mobile (9:16 Aspect)", value: "aspect-[9/16] object-cover max-w-sm mx-auto" }
     ],
-    default: "aspect-video object-cover" 
+    default: "aspect-video object-cover"
+  },
+  widthMode: {
+    type: "select",
+    label: "Layout Width",
+    options: [
+      { label: "Contained (Centered)", value: "max-w-5xl px-4" },
+      { label: "Full Width", value: "w-full" }
+    ],
+    default: "max-w-5xl px-4"
+  },
+  horizontalOffset: {
+    type: "range",
+    label: "Horizontal Shift",
+    min: -100,
+    max: 100,
+    step: 1,
+    unit: "%",
+    default: 0
+  },
+  scale: {
+    type: "range",
+    label: "Video Zoom (Scale)",
+    min: 0.5,
+    max: 3,
+    step: 0.1,
+    unit: "x",
+    default: 1
+  },
+  clipContent: {
+    type: "boolean",
+    label: "Clip Video to Container",
+    default: true
   }
 };

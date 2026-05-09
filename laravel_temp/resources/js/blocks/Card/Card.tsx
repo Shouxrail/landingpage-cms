@@ -27,6 +27,7 @@ export const Card = ({ data }: {
     icon?: string;
     iconSize?: number;
     children?: any[];
+    suptitleMarginLeft?: number;
   }
 }) => {
   const alignment = data.align || "items-center text-center";
@@ -51,6 +52,7 @@ export const Card = ({ data }: {
         <div className={`w-full flex flex-col ${containerAlignClass} space-y-6`}>
           <div className="flex items-baseline self-start gap-3" style={data.icon ? {
             transform: `translateX(-${((data.iconSize || 48) + 12) / 16}rem)`,
+            marginLeft: `${data.suptitleMarginLeft || 0}px`,
           } : {}}>
             {data.icon && (
               <img

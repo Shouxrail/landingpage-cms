@@ -13,6 +13,18 @@ export const TextSchema = {
     ],
     default: "text-base"
   },
+  fontWeight: {
+    type: "select",
+    label: "Font Weight",
+    options: [
+      { label: "Normal", value: "font-normal" },
+      { label: "Medium", value: "font-medium" },
+      { label: "Bold", value: "font-bold" },
+      { label: "Extra Bold", value: "font-extrabold" },
+    ],
+    default: "font-normal"
+  },
+  fontItalic: { type: "boolean", label: "Italic", default: false },
   color: { type: "color", label: "Text Color", default: "#4B5563" },
   align: {
     type: "select",
@@ -37,6 +49,8 @@ export const TextSchema = {
     default: "leading-relaxed"
   },
   marginTop: { type: "range", label: "Margin Top (px)", min: 0, max: 100, step: 4, default: 0 },
+  marginLeft: { type: "range", label: "Margin Left (px)", min: 0, max: 100, step: 4, default: 0 },
+  marginRight: { type: "range", label: "Margin Right (px)", min: 0, max: 100, step: 4, default: 0 },
   marginBottom: { type: "range", label: "Margin Bottom (px)", min: 0, max: 100, step: 4, default: 8 },
   letterSpacing: { type: "range", label: "Letter Spacing (em)", min: -0.1, max: 0.5, step: 0.01, default: 0 },
   links: {

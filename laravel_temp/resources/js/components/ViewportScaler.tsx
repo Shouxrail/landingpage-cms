@@ -4,9 +4,10 @@ import React, { useEffect, useState, useRef } from 'react';
 interface ViewportScalerProps {
   children: React.ReactNode;
   baseWidth?: number;
+  simulatedWidth?: number;
 }
 
-export default function ViewportScaler({ children, baseWidth = 1440 }: ViewportScalerProps) {
+export default function ViewportScaler({ children, baseWidth = 1440, simulatedWidth }: ViewportScalerProps) {
   const [scale, setScale] = useState(1);
   const [contentHeight, setContentHeight] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -16,7 +17,7 @@ export default function ViewportScaler({ children, baseWidth = 1440 }: ViewportS
     setMounted(true);
 
     const update = () => {
-      const width = window.innerWidth;
+      const width = simulatedWidth ?? window.innerWidth;
       const newScale = width < baseWidth ? width / baseWidth : 1;
       setScale(newScale);
 
@@ -46,7 +47,7 @@ export default function ViewportScaler({ children, baseWidth = 1440 }: ViewportS
       resizeObserver.disconnect();
       clearTimeout(timer);
     };
-  }, [baseWidth]);
+  }, [baseWidth, simulatedWidth]);
 
   // SSG fallback or initial mount
   if (!mounted) return <div className="w-full h-screen bg-transparent">{children}</div>;

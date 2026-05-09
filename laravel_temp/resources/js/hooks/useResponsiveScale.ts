@@ -14,13 +14,9 @@ export function useResponsiveScale(designWidth = 1536, threshold = 768) {
     const handleResize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
+      const isEditor = window.location.pathname.includes("/admin/editor");
       
-      // Calculate scale relative to design width
       const scale = width / designWidth;
-      
-      // Decision: Are we in desktop mode?
-      // Instead of just width, we check if the window width is at least the threshold.
-      // Or we could check scale > 0.5.
       const isDesktop = width >= threshold;
 
       setState({
@@ -30,20 +26,18 @@ export function useResponsiveScale(designWidth = 1536, threshold = 768) {
         isDesktop,
       });
 
-      // Apply classes to document element for Tailwind variant
-      if (isDesktop) {
-        document.documentElement.classList.add("is-desktop");
-        document.documentElement.classList.remove("is-mobile");
-        
-        // Font sizing scale: 16px at designWidth (e.g., 1536px)
-        // This makes 1rem = 16px * scale.
-        document.documentElement.style.fontSize = `${scale * 16}px`;
-      } else {
-        document.documentElement.classList.remove("is-desktop");
-        document.documentElement.classList.add("is-mobile");
-        
-        // Reset to default on mobile
-        document.documentElement.style.fontSize = "16px";
+      // Only apply global root classes if NOT in the editor
+      // In the editor, components should rely on the classes applied by the Editor wrapper
+      if (!isEditor) {
+        if (isDesktop) {
+          document.documentElement.classList.add("is-desktop");
+          document.documentElement.classList.remove("is-mobile");
+          document.documentElement.style.fontSize = `${scale * 16}px`;
+        } else {
+          document.documentElement.classList.remove("is-desktop");
+          document.documentElement.classList.add("is-mobile");
+          document.documentElement.style.fontSize = "16px";
+        }
       }
     };
 

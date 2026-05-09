@@ -2,6 +2,7 @@
 "use client";
 import React, { useState } from "react";
 import { usePage } from "@inertiajs/react";
+import { useResponsiveScale } from "@/hooks/useResponsiveScale";
 
 interface SubField {
     name: string;
@@ -98,6 +99,8 @@ export default function FormBlock({ data }: { data: FormBlockProps }) {
 
     const [formData, setFormData] = useState<Record<string, any>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { isDesktop } = useResponsiveScale();
+    const isMobile = !isDesktop;
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isHuman, setIsHuman] = useState(false);
@@ -155,7 +158,7 @@ export default function FormBlock({ data }: { data: FormBlockProps }) {
     }
 
     return (
-        <div className="w-full max-w-2xl mx-auto px-4 md:px-0">
+        <div className="w-full max-w-2xl mx-auto md:px-0">
             <div
                 className="overflow-hidden relative group"
                 style={{ backgroundColor: bgColor }}
@@ -178,17 +181,17 @@ export default function FormBlock({ data }: { data: FormBlockProps }) {
                                 // --- MULTIPLE (grouped) fields ---
                                 if (field.type === "multiple" && Array.isArray(field.fields)) {
                                     return (
-                                        <div key={idx} className="space-y-1 flex flex-direction-row gap-3 items-end">
-                                            <label className="pb-[10px] w-[19.5%]">
+                                        <div key={idx} className="space-y-1 flex flex-direction-row gap-3 items-start md:items-end">
+                                            <label className="pt-[30px] pb-[10px] w-[19.5%]">
                                                 <span className="text-white">
                                                     {field.label}:
                                                 </span>
                                             </label>
-                                            <div className="grid gap-3 flex-1" style={{ gridTemplateColumns: `repeat(${field.fields.length}, minmax(0, 1fr))` }}>
+                                            <div className="grid gap-3 flex-1 grid-cols-1 md:grid-cols-[repeat(var(--cols),minmax(0,1fr))]" style={{ '--cols': field.fields.length } as any}>
                                                 {field.fields.map((sub, sIdx) => (
                                                     <div key={sIdx} className="form-control w-full group/field">
                                                         <label className="pb-0.5">
-                                                            <span className="text-white text-[0.56rem]">
+                                                            <span className="text-[#66C7C4] sm:text-white text-[0.56rem]">
                                                                 {sub.label}:
                                                             </span>
                                                         </label>
@@ -234,8 +237,8 @@ export default function FormBlock({ data }: { data: FormBlockProps }) {
 
                         <div className="flex gap-3 pt-5">
                             <div className="w-[19%] shrink-0"></div>
-                            <div className="flex flex-1 justify-between items-center">
-                                <div className="flex gap-3 items-center">
+                            <div className="grid grid-cols-1 md:grid-cols-[220px_minmax(0,1fr)] flex-1 justify-between items-center">
+                                <div className="flex gap-3 items-center pb-6">
                                     <input
                                         type="checkbox"
                                         id="we_are_human"
@@ -244,21 +247,23 @@ export default function FormBlock({ data }: { data: FormBlockProps }) {
                                         checked={isHuman}
                                         onChange={(e) => setIsHuman(e.target.checked)}
                                     />
-                                    <label htmlFor="we_are_human" className="text-white">we are human</label>
+                                    <label htmlFor="we_are_human" className="text-white uppercase sm:normal-case">we are human</label>
                                 </div>
-                                <button
-                                    type="submit"
-                                    disabled={isSubmitting || !isHuman}
-                                    className="btn btn-primary text-[400] px-[2.5rem] rounded-4xl hover:scale-[1.02] active:scale-95 transition-all text-base tracking-[20%] group disabled:bg-primary disabled:border-primary disabled:text-white/50 disabled:hover:scale-100 disabled:active:scale-100"
-                                >
-                                    {isSubmitting ? (
-                                        <span className="loading loading-spinner"></span>
-                                    ) : (
-                                        <div className="flex items-center justify-center gap-2">
-                                            {submitText}
-                                        </div>
-                                    )}
-                                </button>
+                                <div className="text-end">
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting || !isHuman}
+                                        className="btn btn-primary text-[400] px-[2.5rem] rounded-4xl hover:scale-[1.02] active:scale-95 transition-all text-base tracking-[20%] group disabled:bg-primary disabled:border-primary disabled:text-white/50 disabled:hover:scale-100 disabled:active:scale-100"
+                                    >
+                                        {isSubmitting ? (
+                                            <span className="loading loading-spinner"></span>
+                                        ) : (
+                                            <div className="flex items-center justify-center gap-2">
+                                                {submitText}
+                                            </div>
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </form>

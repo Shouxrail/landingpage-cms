@@ -5,9 +5,9 @@ export const ListBlockSchema = {
     itemSchema: {
       title: { type: "text", label: "Item Title", default: "List Item Title" },
       contentBlocks: { type: "blocks", label: "Content Blocks", default: [] },
-      defaultOpen: { 
-        type: "select", 
-        label: "Default State", 
+      defaultOpen: {
+        type: "select",
+        label: "Default State",
         options: [
           { label: "Closed", value: "false" },
           { label: "Open", value: "true" }
@@ -35,6 +35,17 @@ export const ListBlockSchema = {
       { label: "Extra Large", value: "text-2xl" },
     ],
     default: "text-base"
+  },
+  titleWeight: {
+    type: "select",
+    label: "Title Font Weight",
+    options: [
+      { label: "Normal", value: "font-normal" },
+      { label: "Medium", value: "font-medium" },
+      { label: "Bold", value: "font-bold" },
+      { label: "Extra Bold", value: "font-extrabold" },
+    ],
+    default: "font-medium"
   },
   textContentSize: {
     type: "select",
@@ -66,5 +77,6 @@ export const ListBlockSchema = {
       { label: "Relaxed", value: "gap-6" }
     ],
     default: "gap-4"
-  }
+  },
+  marginLeft: { type: "range", label: "Margin Left (px)", min: 0, max: 100, step: 4, default: 32 },
 };

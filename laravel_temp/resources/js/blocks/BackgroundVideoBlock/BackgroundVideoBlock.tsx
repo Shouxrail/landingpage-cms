@@ -5,7 +5,7 @@ export const BackgroundVideoBlockComponent = ({ data }: { data: any }) => {
     const sectionRef = useRef<HTMLElement>(null);
     const [isInView, setIsInView] = useState(false);
 
-    const url = data.url || "https://www.w3schools.com/html/mov_bbb.mp4";
+    const url = data.url;
     const poster = data.poster || "";
     const opacity = data.overlayOpacity || "bg-black/60";
     const placement = data.contentPosition || "items-center justify-center text-center";
@@ -40,7 +40,7 @@ export const BackgroundVideoBlockComponent = ({ data }: { data: any }) => {
         <section
             ref={sectionRef}
             id={data.id || ""}
-            className={`relative w-screen ${heightClass} flex overflow-hidden group ${isFixed ? '[clip-path:inset(0)]' : ''}`}
+            className={`relative ${heightClass} flex overflow-hidden group ${isFixed ? '[clip-path:inset(0)]' : ''}`}
             style={{
                 backgroundColor: data.bgColor || '#000000',
                 paddingLeft: `${(horizontalPadding || 0) / 16}rem`,
@@ -48,19 +48,23 @@ export const BackgroundVideoBlockComponent = ({ data }: { data: any }) => {
             }}
         >
             {/* Auto-playing muted background video */}
-            <video
-                key={url}
-                poster={poster}
-                preload="none"
-                className={`${isFixed ? 'fixed' : 'absolute'} z-0 pointer-events-none object-cover ${videoPlacement} ${videoSize} ${objectPosition} transition-transform duration-300`}
-                style={{ transform: `translateX(${horizontalOffset}%)` }}
-                autoPlay
-                loop
-                muted
-                playsInline
-            >
-                {isInView && <source src={url} type="video/mp4" />}
-            </video>
+            {url && (
+                <video
+                    key={url}
+                    poster={poster}
+                    preload="none"
+                    className={`${isFixed ? 'fixed' : 'absolute'} z-0 pointer-events-none object-cover ${videoPlacement} ${videoSize} ${objectPosition} transition-all duration-300`}
+                    style={{ 
+                        objectPosition: horizontalOffset !== 0 ? `calc(50% + ${horizontalOffset}%) center` : undefined 
+                    }}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                >
+                    {isInView && <source src={url} type="video/mp4" />}
+                </video>
+            )}
 
             {/* Darkness Overlay mapped from config */}
             <div className={`${isFixed ? 'fixed' : 'absolute'} top-0 left-0 w-full h-full z-10 transition-colors duration-500 ${opacity} ${isFixed ? 'pointer-events-none' : ''}`}></div>

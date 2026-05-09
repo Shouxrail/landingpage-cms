@@ -5,6 +5,10 @@ interface CustomLink {
   url: string;
   newTab?: boolean;
   underline?: boolean;
+  marginLeft?: number;
+  marginRight?: number;
+  fontWeight?: string;
+  fontItalic?: boolean;
 }
 
 /**
@@ -76,13 +80,16 @@ export const TextBlockComponent = ({ data }: { data: any }) => {
 
   return (
     <p
-      className={`${fontSize} ${align} ${lineHeight}`}
+      className={`${fontSize} ${align} ${lineHeight} ${data.fontWeight}`}
       style={{
         color: color === "inherit" ? undefined : color,
         marginTop,
         marginBottom,
         letterSpacing,
         whiteSpace: "pre-line",
+        marginLeft: `${data.marginLeft || 0}px`,
+        marginRight: `${data.marginRight || 0}px`,
+        fontStyle: data.fontItalic ? "italic" : "normal",
       }}
     >
       {parseLinks(content, customLinks)}

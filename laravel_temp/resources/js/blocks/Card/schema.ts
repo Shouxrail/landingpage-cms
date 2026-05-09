@@ -48,6 +48,7 @@ export const CardSchema = {
     ],
     default: "text-xl"
   },
+  suptitleMarginLeft: { type: "number", label: "Sup Title Margin Left (px)", min: 0, max: 300, step: 10, default: 0 },
   title: { type: "textarea", label: "Section Title", default: "Our Features" },
   titleSize: {
     type: "select",

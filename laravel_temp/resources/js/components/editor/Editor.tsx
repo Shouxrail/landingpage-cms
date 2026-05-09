@@ -132,7 +132,7 @@ export default function Editor({
       <div className={`flex-1 flex min-w-0 overflow-hidden ${deviceMode === 'desktop' ? 'flex-col' : 'flex-row'}`}>
 
         {/* PREVIEW CONTAINER */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden relative bg-white pattern-dots custom-scrollbar flex flex-col items-center no-scrollbar">
+        <main className={`${deviceMode == 'mobile' ? 'max-w-[480px] w-full' : 'max-w-[1440px] w-full'} overflow-y-auto overflow-x-hidden relative bg-white pattern-dots custom-scrollbar flex flex-col items-center no-scrollbar`}>
           {deviceMode === 'mobile' && mobileBlocks === null ? (
             <div className="flex flex-col items-center justify-center m-auto p-12 bg-white/5 border border-white/10 rounded-3xl max-w-md text-center">
               <div className="w-20 h-20 bg-primary/20 text-primary rounded-full flex items-center justify-center mb-6 border border-primary/30">
@@ -153,27 +153,31 @@ export default function Editor({
           ) : (
             <div
               style={{
-                transform: deviceMode === 'desktop' ? 'scale(0.7)' : 'scale(0.5)',
-                transformOrigin: 'top center',
-                marginBottom: deviceMode === 'desktop' ? '-20%' : '0',
+                // transform: deviceMode === 'desktop' ? 'scale(0.7)' : 'scale(1)',
+                // transformOrigin: 'top center',
               }}
-              className={`flex-1 h-screen w-screen transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${deviceMode === 'mobile'
-                ? 'w-[375px] min-h-[812px] rounded-[3rem] border-[8px] border-[#1a1a1a] shadow-[0_0_0_2px_rgba(255,255,255,0.1),0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden'
-                : ''
+              className={`w-full transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${deviceMode === 'mobile'
+                ? 'overflow-hidden bg-white my-[0px]'
+                : 'h-full bg-white'
                 }`}
             >
-              <div className="w-full">
-                <div className="overflow-hidden bg-white">
-                  {activeBlocks.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center p-12 text-center min-h-[500px]">
-                      <span className="text-6xl mb-6">✨</span>
-                      <h3 className="text-xl font-black text-slate-800">Your canvas is empty</h3>
-                      <p className="text-slate-500 mt-2">Add your first block from the sidebar</p>
-                    </div>
-                  ) : (
-                    <BlockRenderer blocks={activeBlocks} />
-                  )}
-                </div>
+              <div className={`w-full h-full overflow-y-auto no-scrollbar ${deviceMode === 'desktop' ? 'is-desktop' : 'is-mobile'}`}>
+                <ViewportScaler
+                  baseWidth={deviceMode === 'desktop' ? 1536 : 480}
+                  simulatedWidth={deviceMode === 'desktop' ? (1536 * 0.7) : 480}
+                >
+                  <div className="min-h-full">
+                    {activeBlocks.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center p-12 text-center min-h-[500px]">
+                        <span className="text-6xl mb-6">✨</span>
+                        <h3 className="text-xl font-black text-slate-800">Your canvas is empty</h3>
+                        <p className="text-slate-500 mt-2">Add your first block from the sidebar</p>
+                      </div>
+                    ) : (
+                      <BlockRenderer blocks={activeBlocks} />
+                    )}
+                  </div>
+                </ViewportScaler>
               </div>
             </div>
           )}
@@ -205,7 +209,7 @@ export default function Editor({
 
         {/* MOBILE: Right-side property panel — full height, beside the phone */}
         {deviceMode === "mobile" && mobileBlocks !== null && (
-          <div className="w-[380px] shrink-0 h-full flex flex-col bg-[#0a0a0a] border-l border-white/10 overflow-hidden transition-all duration-500">
+          <div className="flex-1 shrink-0 h-full flex flex-col bg-[#0a0a0a] border-l border-white/10 overflow-hidden transition-all duration-500">
             {selectedIndex !== null && activeBlocks[selectedIndex] ? (
               <>
                 {/* Panel header */}

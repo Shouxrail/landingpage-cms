@@ -17,10 +17,12 @@ export const ListBlock = ({ data }: {
     bgColor?: string;
     textColor?: string;
     titleSize?: string;
+    titleWeight?: string;
     textContentSize?: string;
     borderColor?: string;
     spacing?: string;
     listStyle?: string;
+    marginLeft?: number;
   }
 }) => {
   const items = data.items || [];
@@ -36,12 +38,12 @@ export const ListBlock = ({ data }: {
   };
 
   return (
-    <ul className={`ml-8 flex flex-col ${spacing} ${data.listStyle || 'list-disc'}`} style={{ color: data.textColor || 'inherit' }}>
+    <ul className={`flex flex-col ${spacing} ${data.listStyle || 'list-disc'}`} style={{ color: data.textColor || 'inherit', marginLeft: `${data.marginLeft ?? 32}px` }}>
       {items.map((item, index) => {
         const hasContent = (item.contentBlocks && item.contentBlocks.length > 0) || !!item.content;
         const isOpen = openIndex === index;
         return (
-          <li key={index} className={`${data.titleSize} ${spacing}`}> {/* This handles the bullet naturally */}
+          <li key={index} className={`${data.titleSize} ${data.titleWeight} ${spacing}`}> {/* This handles the bullet naturally */}
             <div className="inline-block w-full"> {/* Keeps the details component behaving nicely */}
               <details
                 className="group transition-all duration-300 overflow-hidden border"
