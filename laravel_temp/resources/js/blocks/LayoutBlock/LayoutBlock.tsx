@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 const BlockRenderer = lazy(() => import("@/components/BlockRenderer"));
 
-export const LayoutBlockComponent = ({ data }: { data: { direction: string; children: any[]; bgColor?: string; height?: string; isFullScreen?: string; paddingX?: number; paddingY?: number; alignX?: string; alignY?: string; stackType?: string } }) => {
+export const LayoutBlockComponent = ({ data }: { data: { direction: string; children: any[]; bgColor?: string; height?: string; isFullScreen?: string; paddingX?: number; paddingY?: number; alignX?: string; alignY?: string; stackType?: string; section_id?: string; } }) => {
     const directionClass = data.direction || "grid-cols-1";
     const childBlocks = data.children || [];
     const bgColor = data.bgColor || "transparent";
@@ -13,9 +13,11 @@ export const LayoutBlockComponent = ({ data }: { data: { direction: string; chil
     const alignX = data.alignX || "justify-items-stretch";
     const alignY = data.alignY || "items-start";
     const stackType = data.stackType || "grid";
+    const section_id = data.section_id || "";
 
     return (
         <div
+            id={section_id}
             className={`${stackType} w-full gap-6 ${directionClass} ${alignX} ${alignY} ${heightClass}`}
             style={{
                 backgroundColor: bgColor,

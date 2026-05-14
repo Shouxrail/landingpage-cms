@@ -1,5 +1,6 @@
 export const LayoutBlockSchema = {
   bgColor: { type: "color", label: "Background Color", default: "transparent" },
+  section_id: { type: "text", label: "Section ID", default: "" },
   paddingX: { type: "range", label: "Horizontal Padding", min: 0, max: 200, step: 1, unit: "px", default: 0 },
   paddingY: { type: "range", label: "Vertical Padding", min: 0, max: 200, step: 1, unit: "px", default: 0 },
   stackType: {

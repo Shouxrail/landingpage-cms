@@ -12,7 +12,6 @@ export default function HashScrollHandler() {
 
             const performScroll = (pos: number) => {
                 if (container) {
-                    console.log('Scrolling to position:', pos);
                     // Disable snap to allow smooth movement
                     container.style.scrollSnapType = 'none';
 
@@ -35,9 +34,8 @@ export default function HashScrollHandler() {
                 // We look for direct children of the container that have the id or contain the target
                 const sections = Array.from(container.querySelectorAll(':scope > div, :scope > section'));
                 const index = sections.findIndex(s => s === target || s.contains(target));
-                
+
                 if (index !== -1) {
-                    console.log('Target section index found:', index);
                     performScroll(index * container.clientHeight);
                 } else {
                     // Fallback to offsetTop if index lookup fails
