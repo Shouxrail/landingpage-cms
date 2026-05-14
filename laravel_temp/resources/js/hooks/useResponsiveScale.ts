@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-export function useResponsiveScale(designWidth = 1536, threshold = 768) {
+export function useResponsiveScale(designWidth = 1536, threshold = 768, mobileDesignWidth = 480) {
   const [state, setState] = useState({
     width: typeof window !== "undefined" ? window.innerWidth : 0,
     height: typeof window !== "undefined" ? window.innerHeight : 0,
@@ -16,8 +16,8 @@ export function useResponsiveScale(designWidth = 1536, threshold = 768) {
       const height = window.innerHeight;
       const isEditor = window.location.pathname.includes("/admin/editor");
       
-      const scale = width / designWidth;
       const isDesktop = width >= threshold;
+      const scale = isDesktop ? width / designWidth : width / mobileDesignWidth;
 
       setState({
         width,
@@ -32,12 +32,11 @@ export function useResponsiveScale(designWidth = 1536, threshold = 768) {
         if (isDesktop) {
           document.documentElement.classList.add("is-desktop");
           document.documentElement.classList.remove("is-mobile");
-          document.documentElement.style.fontSize = `${scale * 16}px`;
         } else {
           document.documentElement.classList.remove("is-desktop");
           document.documentElement.classList.add("is-mobile");
-          document.documentElement.style.fontSize = "16px";
         }
+        document.documentElement.style.fontSize = `${scale * 16}px`;
       }
     };
 

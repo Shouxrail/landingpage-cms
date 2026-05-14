@@ -84,13 +84,18 @@ export const BackgroundVideoSchema = {
     default: "object-center"
   },
   horizontalOffset: {
-    type: "range",
+    type: "number",
     label: "Manual Horizontal Shift",
-    min: -100,
-    max: 100,
-    step: 1,
-    unit: "%",
     default: 0
+  },
+  horizontalOffsetUnit: {
+    type: "select",
+    label: "Horizontal Offset Unit",
+    options: [
+      { label: "Pixels (Scaled)", value: "px" },
+      { label: "Percentage (%)", value: "%" }
+    ],
+    default: "%"
   },
   fixedBackground: { type: "boolean", label: "Fixed Background (Still on Scroll)", default: false },
   children: {

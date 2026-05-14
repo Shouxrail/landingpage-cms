@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scroll Snap Test</title>
+<style>
+  body, html { margin: 0; padding: 0; }
+  main {
+    height: 100dvh;
+    width: 100%;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    display: grid;
+    grid-template-columns: 1fr;
+    position: relative;
+  }
+  .sticky-wrapper {
+    position: sticky;
+    width: 100%;
+    /* The trick: stick to the top if smaller than screen, stick to bottom if larger */
+    top: min(0px, calc(100dvh - 100%));
+  }
+  .section {
+    width: 100%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    overflow: hidden;
+  }
+  .s1 { min-height: 100dvh; background: lightblue; z-index: 1; }
+  .s2 { min-height: 150dvh; background: lightcoral; z-index: 2; }
+  .s3 { min-height: 100dvh; background: lightgreen; z-index: 3; }
+</style>
+</head>
+<body>
+  <main>
+    <div class="sticky-wrapper" style="z-index: 1;">
+      <section class="section s1">
+        <h1>Section 1 (100dvh)</h1>
+      </section>
+    </div>
+    <div class="sticky-wrapper" style="z-index: 2;">
+      <section class="section s2">
+        <h1>Section 2 (150dvh)</h1>
+        <div style="height: 130dvh;">Filler</div>
+        <h1>Bottom of Section 2</h1>
+      </section>
+    </div>
+    <div class="sticky-wrapper" style="z-index: 3;">
+      <section class="section s3">
+        <h1>Section 3 (100dvh)</h1>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

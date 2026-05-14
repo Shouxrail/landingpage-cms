@@ -24,7 +24,8 @@ export const CardSchema = {
     ],
     default: "bg-transparent"
   },
-  paddingY: { type: "range", label: "Vertical Padding (px)", min: 0, max: 300, step: 10, default: 100 },
+  paddingY: { type: "range", label: "Vertical Padding (px)", min: 0, max: 300, step: 1, default: 100 },
+  paddingX: { type: "range", label: "Horizontal Padding (px)", min: 0, max: 300, step: 1, default: 0 },
   align: {
     type: "select",
     label: "Content Alignment",

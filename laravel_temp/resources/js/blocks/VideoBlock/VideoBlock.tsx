@@ -11,11 +11,11 @@ export const VideoBlockComponent = ({ data }: { data: { url: string; poster?: st
 
     return (
         <section className={`${widthMode} mx-auto w-full flex justify-center`}>
-            <div className={`w-full relative ${isFullWidth ? '' : 'rounded-2xl shadow-2xl'} ${clipContent ? 'overflow-hidden' : ''} bg-black`}>
+            <div className={`w-full relative ${isFullWidth ? '' : 'shadow-2xl'} ${clipContent ? 'overflow-hidden' : ''} bg-black`}>
                 <video
                     key={data.url}
                     className={`w-full ${customFit} transition-all duration-300`}
-                    style={{ 
+                    style={{
                         transform: `translateX(${horizontalOffset}%) scale(${scale})`,
                         transformOrigin: 'center center'
                     }}

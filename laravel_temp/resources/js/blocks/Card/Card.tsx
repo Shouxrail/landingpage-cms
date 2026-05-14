@@ -12,6 +12,7 @@ export const Card = ({ data }: {
     titleColor?: string;
     bgColor?: string;
     paddingY?: number;
+    paddingX?: number;
     align?: string;
     maxWidth?: number;
     maxWidthUnit?: string;
@@ -31,12 +32,15 @@ export const Card = ({ data }: {
   }
 }) => {
   const alignment = data.align || "items-center text-center";
-  const paddingY = data.paddingY !== undefined ? `${data.paddingY / 16}rem` : "6.25rem";
+  const paddingY = data.paddingY !== undefined ? `${data.paddingY / 16}rem` : "0rem";
+  const paddingX = data.paddingX !== undefined ? `${data.paddingX / 16}rem` : "0rem";
   const childBlocks = data.children || [];
 
   const bgStyle: any = {
     paddingTop: paddingY,
     paddingBottom: paddingY,
+    paddingLeft: paddingX,
+    paddingRight: paddingX,
   };
 
   if (data.bgColor) bgStyle.backgroundColor = data.bgColor;

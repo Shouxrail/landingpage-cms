@@ -89,13 +89,13 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
 
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 px-8 py-5 bg-[rgba(0,0,0,0.35)] backdrop-blur-[0.25rem]`}
+            className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 px-[2rem] py-[1.25rem] bg-[rgba(0,0,0,0.35)] backdrop-blur-[0.25rem]`}
         >
             <div className="w-full mx-auto flex items-center justify-between">
                 {/* Logo Section */}
                 <Link
                     href="/"
-                    className="flex items-center gap-3 group"
+                    className="flex items-center gap-[0.75rem] group"
                     onClick={() => {
                         if (window.location.pathname === '/' || window.location.pathname === '') {
                             setTimeout(() => window.dispatchEvent(new Event('scroll-to-hash')), 10);
@@ -103,7 +103,7 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
                     }}
                 >
                     {logoUrl ? (
-                        <img src={logoUrl} alt={siteName} className="w-[12.5rem] object-contain transition-transform group-hover:scale-110" />
+                        <img src={logoUrl} alt={siteName} className="w-[9rem] md:w-[12.5rem] object-contain transition-transform group-hover:scale-110" />
                     ) : (
                         <span className="text-xl font-black text-white tracking-tighter">
                             {siteName?.split(' ')[0]}<span className="text-primary">.</span>
@@ -112,7 +112,7 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
                 </Link>
 
                 {/* Desktop Menu */}
-                <div className="hidden md:flex items-center gap-8">
+                <div className="hidden md:flex items-center gap-[2rem]">
                     {menuItems.map((item, idx) => {
                         const hasHash = item.url.includes('#');
                         const isHome = item.url === '/' || item.url === '';
@@ -183,7 +183,7 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
 
             {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
-                <div className="md:hidden absolute top-full left-0 right-0 bg-black/90 backdrop-blur-3xl border-b border-white/10 p-8 space-y-6 animate-in slide-in-from-top-4">
+                <div className="md:hidden absolute top-full left-0 right-0 bg-black/90 backdrop-blur-3xl border-b border-white/10 p-[2rem] space-y-[1.5rem] animate-in slide-in-from-top-4">
                     {menuItems.map((item, idx) => {
                         const hasHash = item.url.includes('#');
                         const isHome = item.url === '/' || item.url === '';

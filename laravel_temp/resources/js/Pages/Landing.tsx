@@ -1,7 +1,9 @@
+import { useState, useEffect } from 'react';
 import BlockRenderer from '@/components/BlockRenderer';
 import Navbar from '@/components/Navbar';
 import SnapScrollContainer from '@/components/SnapScrollContainer';
 import HashScrollHandler from '@/components/HashScrollHandler';
+import TitleRevealOverlay from '@/components/TitleRevealOverlay';
 import { Head } from '@inertiajs/react';
 import { useResponsiveScale } from '@/hooks/useResponsiveScale';
 
@@ -14,7 +16,9 @@ interface LandingProps {
             settings?: {
                 backgroundColor?: string;
                 isSnapScroll?: boolean;
+                isSnapScrollMobile?: boolean;
                 isTitleReveal?: boolean;
+                isTitleRevealMobile?: boolean;
             };
         };
         mobile_content?: any;
@@ -38,9 +42,35 @@ export default function Landing({ page, settings }: LandingProps) {
     const mobileBlocks = mobileContent?.blocks || [];
     const hasMobileBlocks = mobileBlocks.length > 0;
     const pageSettings = content.settings || {};
-    const isSnapScroll = pageSettings.isSnapScroll || false;
+    const { isDesktop, scale } = useResponsiveScale(1536, 768, 480);
 
-    const { isDesktop, scale } = useResponsiveScale(1536, 768);
+    // Select settings based on device
+    const isSnapScroll = isDesktop
+        ? (pageSettings.isSnapScroll !== false) // Default true for desktop
+        : (pageSettings.isSnapScrollMobile || false); // Default false for mobile
+
+    const isTitleReveal = isDesktop
+        ? (pageSettings.isTitleReveal || false)
+        : (pageSettings.isTitleRevealMobile || false);
+
+    const [isAnimating, setIsAnimating] = useState(false);
+    const [hasAnimated, setHasAnimated] = useState(false);
+
+    useEffect(() => {
+        if (!isTitleReveal || isSnapScroll || hasAnimated) return;
+
+        const handleScroll = () => {
+            if (window.scrollY > 20) {
+                setIsAnimating(true);
+                setHasAnimated(true);
+                // The animation exits on its own, but we should clear isAnimating after it finishes
+                setTimeout(() => setIsAnimating(false), 2000);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [isTitleReveal, isSnapScroll, hasAnimated]);
 
     const navbar = (
         <Navbar
@@ -78,14 +108,14 @@ export default function Landing({ page, settings }: LandingProps) {
                         <SnapScrollContainer
                             blocks={blocks}
                             siteName={settings?.site_name}
-                            isTitleReveal={pageSettings.isTitleReveal || false}
+                            isTitleReveal={isTitleReveal}
                             backgroundColor={pageSettings.backgroundColor}
                         />
                     ) : (
                         <SnapScrollContainer
                             blocks={hasMobileBlocks ? mobileBlocks : blocks}
                             siteName={settings?.site_name}
-                            isTitleReveal={pageSettings.isTitleReveal || false}
+                            isTitleReveal={isTitleReveal}
                             backgroundColor={pageSettings.backgroundColor}
                         />
                     )}
@@ -105,6 +135,9 @@ export default function Landing({ page, settings }: LandingProps) {
                     overflowX: 'hidden',
                 }}
             >
+                {isTitleReveal && (
+                    <TitleRevealOverlay isVisible={isAnimating} siteName={settings?.site_name || ''} />
+                )}
                 {isDesktop ? (
                     <BlockRenderer blocks={blocks} />
                 ) : (

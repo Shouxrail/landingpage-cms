@@ -1,3 +1,13 @@
 export const SpacerSchema = {
-  height: { type: "range", label: "Height (px)", min: 0, max: 2000, step: 4, default: 40 },
+  height: { type: "number", label: "Height", default: 40 },
+  unit: {
+    type: "select",
+    label: "Unit",
+    options: [
+      { label: "Pixels (Scaled)", value: "px" },
+      { label: "Percentage (%)", value: "%" },
+      { label: "Viewport Height (vh)", value: "vh" }
+    ],
+    default: "px"
+  },
 };

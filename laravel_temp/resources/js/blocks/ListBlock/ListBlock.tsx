@@ -75,8 +75,8 @@ export const ListBlock = ({ data }: {
                     )}
                   </div>
                   {hasContent && (
-                    <span className={`transition-transform duration-300 ml-2 ${isOpen ? '-rotate-180' : ''}`}>
-                      <svg width="21" height="10" viewBox="0 0 21 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <span className={`transition-transform duration-300 ml-2 shrink-0 ${isOpen ? '-rotate-180' : ''}`}>
+                      <svg viewBox="0 0 21 10" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[0.75rem] md:w-[1.3rem] h-auto">
                         <path d="M20.016 0L10.008 10.008L0 0H20.016Z" fill="#00BF9C" />
                       </svg>
                     </span>

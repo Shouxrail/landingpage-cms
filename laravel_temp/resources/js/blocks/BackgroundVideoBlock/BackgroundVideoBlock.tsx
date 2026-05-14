@@ -13,6 +13,7 @@ export const BackgroundVideoBlockComponent = ({ data }: { data: any }) => {
     const videoPlacement = data.videoPlacement || "top-0 left-0";
     const objectPosition = data.objectPosition || "object-center";
     const horizontalOffset = data.horizontalOffset || 0;
+    const horizontalOffsetUnit = data.horizontalOffsetUnit || "%";
     const horizontalPadding = data.horizontalPadding || 0;
     const isFixed = data.fixedBackground || false;
     const heightClass = data.height || "h-screen";
@@ -54,8 +55,10 @@ export const BackgroundVideoBlockComponent = ({ data }: { data: any }) => {
                     poster={poster}
                     preload="none"
                     className={`${isFixed ? 'fixed' : 'absolute'} z-0 pointer-events-none object-cover ${videoPlacement} ${videoSize} ${objectPosition} transition-all duration-300`}
-                    style={{ 
-                        objectPosition: horizontalOffset !== 0 ? `calc(50% + ${horizontalOffset}%) center` : undefined 
+                    style={{
+                        objectPosition: horizontalOffset !== 0 
+                            ? `calc(50% + ${horizontalOffsetUnit === 'px' ? `${horizontalOffset / 16}rem` : `${horizontalOffset}${horizontalOffsetUnit}`}) center` 
+                            : undefined
                     }}
                     autoPlay
                     loop

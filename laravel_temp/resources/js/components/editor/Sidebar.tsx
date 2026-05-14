@@ -7,7 +7,13 @@ interface SidebarProps {
   deviceMode?: "desktop" | "mobile";
   blocks: any[];
   onUpdateBlocks: (blocks: any[]) => void;
-  settings: { backgroundColor?: string; isSnapScroll?: boolean; isTitleReveal?: boolean };
+  settings: { 
+    backgroundColor?: string; 
+    isSnapScroll?: boolean; 
+    isSnapScrollMobile?: boolean;
+    isTitleReveal?: boolean; 
+    isTitleRevealMobile?: boolean;
+  };
   onUpdateSettings: (settings: any) => void;
   selectedIndex: number | null;
   onSelectIndex: (index: number | null) => void;
@@ -247,11 +253,13 @@ export default function Sidebar({
 
               <div className="form-control">
                 <label className="label cursor-pointer flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl transition-colors hover:bg-white/10">
-                  <span className="label-text-alt text-white/50 font-black uppercase text-[8px] tracking-widest">Snap Scroll Animation</span>
+                  <div className="flex flex-col">
+                    <span className="label-text-alt text-white/50 font-black uppercase text-[8px] tracking-widest">Snap Scroll (Desktop)</span>
+                  </div>
                   <input
                     type="checkbox"
                     className="toggle toggle-primary toggle-xs"
-                    checked={settings.isSnapScroll || false}
+                    checked={settings.isSnapScroll !== false} // Default to true if undefined
                     onChange={(e) => onUpdateSettings({ ...settings, isSnapScroll: e.target.checked })}
                   />
                 </label>
@@ -259,12 +267,36 @@ export default function Sidebar({
 
               <div className="form-control">
                 <label className="label cursor-pointer flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl transition-colors hover:bg-white/10">
-                  <span className="label-text-alt text-white/50 font-black uppercase text-[8px] tracking-widest">Title Reveal Animation</span>
+                  <span className="label-text-alt text-white/50 font-black uppercase text-[8px] tracking-widest">Snap Scroll (Mobile)</span>
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-primary toggle-xs"
+                    checked={settings.isSnapScrollMobile || false}
+                    onChange={(e) => onUpdateSettings({ ...settings, isSnapScrollMobile: e.target.checked })}
+                  />
+                </label>
+              </div>
+
+              <div className="form-control">
+                <label className="label cursor-pointer flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl transition-colors hover:bg-white/10">
+                  <span className="label-text-alt text-white/50 font-black uppercase text-[8px] tracking-widest">Title Reveal (Desktop)</span>
                   <input
                     type="checkbox"
                     className="toggle toggle-primary toggle-xs"
                     checked={settings.isTitleReveal || false}
                     onChange={(e) => onUpdateSettings({ ...settings, isTitleReveal: e.target.checked })}
+                  />
+                </label>
+              </div>
+
+              <div className="form-control">
+                <label className="label cursor-pointer flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl transition-colors hover:bg-white/10">
+                  <span className="label-text-alt text-white/50 font-black uppercase text-[8px] tracking-widest">Title Reveal (Mobile)</span>
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-primary toggle-xs"
+                    checked={settings.isTitleRevealMobile || false}
+                    onChange={(e) => onUpdateSettings({ ...settings, isTitleRevealMobile: e.target.checked })}
                   />
                 </label>
               </div>
