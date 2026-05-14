@@ -4,7 +4,8 @@ export const TextSchema = {
     type: "select",
     label: "Font Size",
     options: [
-      { label: "Extral Small", value: "text-xs" },
+      { label: "Smallest", value: "text-[0.625rem]" },
+      { label: "Extra Small", value: "text-xs" },
       { label: "Small", value: "text-sm" },
       { label: "Base", value: "text-base" },
       { label: "Large", value: "text-lg" },

@@ -5,7 +5,9 @@ export const LayoutBlockComponent = ({ data }: { data: { direction: string; chil
     const directionClass = data.direction || "grid-cols-1";
     const childBlocks = data.children || [];
     const bgColor = data.bgColor || "transparent";
-    const heightClass = data.height || "h-auto";
+    let heightClass = data.height || "h-auto";
+    if (heightClass === "h-screen") heightClass = "h-[100dvh]";
+    if (heightClass === "min-h-screen") heightClass = "min-h-[100dvh]";
     const paddingX = data.paddingX || 0;
     const paddingY = data.paddingY || 0;
     const alignX = data.alignX || "justify-items-stretch";

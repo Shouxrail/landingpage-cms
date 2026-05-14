@@ -33,7 +33,7 @@ interface FormBlockProps {
     bgColor?: string;
 }
 
-const inputClass = "input input-bordered bg-white border-black/10 text-black focus:border-primary focus:ring-1 focus:ring-primary h-14 rounded-[5px] transition-all placeholder:text-black/50 w-full";
+const inputClass = "input input-bordered bg-white border-black/10 text-black focus:border-primary focus:ring-1 focus:ring-primary h-14 rounded-[5px] transition-all placeholder:text-black/40 w-full";
 
 function SingleInput({ field, fieldKey, formData, setFormData }: {
     field: SubField | FormField;
@@ -46,7 +46,7 @@ function SingleInput({ field, fieldKey, formData, setFormData }: {
             <textarea
                 required={field.required}
                 placeholder={field.placeholder}
-                className="textarea textarea-bordered bg-white border-black/10 text-black focus:border-primary focus:ring-1 focus:ring-primary h-32 rounded-[5px] transition-all placeholder:text-black/50 w-full"
+                className="textarea textarea-bordered bg-white border-black/10 text-black focus:border-primary focus:ring-1 focus:ring-primary h-32 rounded-[5px] transition-all placeholder:text-black/40 w-full"
                 onChange={(e) => setFormData({ ...formData, [fieldKey]: e.target.value })}
             />
         );
@@ -247,7 +247,7 @@ export default function FormBlock({ data }: { data: FormBlockProps }) {
                                         checked={isHuman}
                                         onChange={(e) => setIsHuman(e.target.checked)}
                                     />
-                                    <label htmlFor="we_are_human" className="text-white uppercase sm:normal-case">we are human</label>
+                                    <label htmlFor="we_are_human" className="text-white uppercase text-[0.75rem] tracking-widest sm:normal-case">we are human</label>
                                 </div>
                                 <div className="text-end">
                                     <button

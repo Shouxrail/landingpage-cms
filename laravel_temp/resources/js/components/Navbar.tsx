@@ -183,7 +183,7 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
 
             {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
-                <div className="lg:hidden absolute top-full left-0 right-0 bg-black/90 backdrop-blur-3xl border-b border-white/10 p-[2rem] space-y-[1.5rem] animate-in slide-in-from-top-4">
+                <div className="tracking-[30%] lg:hidden absolute top-full left-0 right-0 bg-black/90 backdrop-blur-3xl border-b border-white/10 p-[2rem] space-y-[1.5rem] animate-in slide-in-from-top-4">
                     {menuItems.map((item, idx) => {
                         const hasHash = item.url.includes('#');
                         const isHome = item.url === '/' || item.url === '';

@@ -16,7 +16,9 @@ export const BackgroundVideoBlockComponent = ({ data }: { data: any }) => {
     const horizontalOffsetUnit = data.horizontalOffsetUnit || "%";
     const horizontalPadding = data.horizontalPadding || 0;
     const isFixed = data.fixedBackground || false;
-    const heightClass = data.height || "h-screen";
+    let heightClass = data.height || "h-screen";
+    if (heightClass === "h-screen") heightClass = "h-[100dvh]";
+    if (heightClass === "min-h-screen") heightClass = "min-h-[100dvh]";
     const childBlocks = data.children || [];
 
     useEffect(() => {

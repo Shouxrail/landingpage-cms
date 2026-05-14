@@ -39,8 +39,8 @@ export const LayoutBlockSchema = {
     label: "Block Height",
     options: [
       { label: "Auto (Content Based)", value: "h-auto" },
-      { label: "Full Screen (100vh)", value: "h-screen" },
-      { label: "Min Full Screen (min-h-screen)", value: "min-h-screen" },
+      { label: "Full Screen (100dvh)", value: "h-[100dvh]" },
+      { label: "Min Full Screen (min-h-[100dvh])", value: "min-h-[100dvh]" },
     ],
     default: "h-auto"
   },

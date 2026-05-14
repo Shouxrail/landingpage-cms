@@ -42,7 +42,7 @@ export default function SnapScrollContainer({
   return (
     <main
       ref={containerRef}
-      className={`h-screen w-full overflow-y-scroll snap-y snap-mandatory transform origin-top-center no-scrollbar`}
+      className={`h-[100dvh] w-full overflow-y-scroll snap-y snap-mandatory transform origin-top-center no-scrollbar`}
       style={{
         // transform: `scale(${scaleX})`,
         // height: height,
@@ -69,7 +69,7 @@ export default function SnapScrollContainer({
             className="h-[100dvh] w-full snap-center snap-always shrink-0 overflow-y-auto shadow-2xl no-scrollbar"
             style={{ zIndex: index + 1 }}
           >
-            <div className="min-h-[100dvh] w-full">
+            <div className="min-h-full w-full flow-root">
               <BlockRenderer blocks={[block]} />
             </div>
           </section>

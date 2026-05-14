@@ -8,11 +8,11 @@ export const BackgroundVideoSchema = {
     type: "select",
     label: "Section Height",
     options: [
-      { label: "Full Screen (100vh)", value: "h-screen" },
-      { label: "Min Full Screen (min-h-screen)", value: "min-h-screen" },
+      { label: "Full Screen (100dvh)", value: "h-[100dvh]" },
+      { label: "Min Full Screen (min-h-[100dvh])", value: "min-h-[100dvh]" },
       { label: "Auto (Content Based)", value: "h-auto" },
     ],
-    default: "h-screen"
+    default: "h-[100dvh]"
   },
   overlayOpacity: {
     type: "select",
