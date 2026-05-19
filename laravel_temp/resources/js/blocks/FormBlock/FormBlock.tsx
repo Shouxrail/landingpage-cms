@@ -33,7 +33,7 @@ interface FormBlockProps {
     bgColor?: string;
 }
 
-const inputClass = "input input-bordered bg-white border-black/10 text-black focus:border-primary focus:ring-1 focus:ring-primary h-14 rounded-[5px] transition-all placeholder:text-black/40 w-full";
+const inputClass = "input input-bordered bg-white border-black/10 text-black focus:border-primary focus:ring-1 focus:ring-primary h-14 rounded-[5px] transition-all placeholder:text-black/15 w-full";
 
 function SingleInput({ field, fieldKey, formData, setFormData }: {
     field: SubField | FormField;
@@ -253,7 +253,8 @@ export default function FormBlock({ data }: { data: FormBlockProps }) {
                                     <button
                                         type="submit"
                                         disabled={isSubmitting || !isHuman}
-                                        className="btn btn-primary text-[400] px-[2.5rem] rounded-4xl hover:scale-[1.02] active:scale-95 transition-all text-base tracking-[20%] group disabled:bg-primary disabled:border-primary disabled:text-white/50 disabled:hover:scale-100 disabled:active:scale-100"
+                                        className="btn btn-primary text-normal px-[2.5rem] rounded-4xl hover:scale-[1.02] active:scale-95 transition-all text-base tracking-[10%] group disabled:bg-primary disabled:border-primary disabled:text-white/50 disabled:hover:scale-100 disabled:active:scale-100"
+                                        style={{ fontWeight: 400 }}
                                     >
                                         {isSubmitting ? (
                                             <span className="loading loading-spinner"></span>
