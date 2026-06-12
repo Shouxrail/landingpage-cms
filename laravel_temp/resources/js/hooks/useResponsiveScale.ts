@@ -16,7 +16,7 @@ export function useResponsiveScale(designWidth = 1536, threshold = 768, mobileDe
       const height = window.innerHeight;
       const isEditor = window.location.pathname.includes("/admin/editor");
       
-      const isDesktop = width >= threshold;
+      const isDesktop = width >= height;
       const scale = isDesktop ? width / designWidth : width / mobileDesignWidth;
 
       setState({
@@ -44,7 +44,7 @@ export function useResponsiveScale(designWidth = 1536, threshold = 768, mobileDe
     handleResize(); // Initial call
 
     return () => window.removeEventListener("resize", handleResize);
-  }, [designWidth, threshold]);
+  }, [designWidth, mobileDesignWidth]);
 
   return state;
 }

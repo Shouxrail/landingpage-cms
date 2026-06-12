@@ -112,7 +112,7 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
                 </Link>
 
                 {/* Desktop Menu */}
-                <div className="hidden lg:flex items-center gap-[2rem]">
+                <div className="hidden md:flex items-center gap-[2rem]">
                     {menuItems.map((item, idx) => {
                         const hasHash = item.url.includes('#');
                         const isHome = item.url === '/' || item.url === '';
@@ -172,7 +172,7 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
 
                 {/* Mobile Toggle */}
                 <button
-                    className="lg:hidden text-white p-2"
+                    className="md:hidden text-white p-2"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -183,7 +183,7 @@ export default function Navbar({ logoUrl, siteName, menuItems = [] }: NavbarProp
 
             {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
-                <div className="tracking-[30%] lg:hidden absolute top-full left-0 right-0 bg-black/90 backdrop-blur-3xl border-b border-white/10 p-[2rem] space-y-[1.5rem] animate-in slide-in-from-top-4">
+                <div className="tracking-[30%] md:hidden absolute top-full left-0 right-0 bg-black/90 backdrop-blur-3xl border-b border-white/10 p-[2rem] space-y-[1.5rem] animate-in slide-in-from-top-4">
                     {menuItems.map((item, idx) => {
                         const hasHash = item.url.includes('#');
                         const isHome = item.url === '/' || item.url === '';
