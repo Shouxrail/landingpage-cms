@@ -17,7 +17,14 @@ export function useResponsiveScale(designWidth = 1536, threshold = 768, mobileDe
       const isEditor = window.location.pathname.includes("/admin/editor");
       
       const isDesktop = width >= height;
-      const scale = isDesktop ? width / designWidth : width / mobileDesignWidth;
+      let scale = isDesktop ? width / designWidth : width / mobileDesignWidth;
+
+      // Clamp the scale factor to prevent text/layout from getting too large or too small
+      if (isDesktop) {
+        scale = Math.min(Math.max(scale, 0.75), 1.2);
+      } else {
+        scale = Math.min(Math.max(scale, 0.5), 1.0);
+      }
 
       setState({
         width,
